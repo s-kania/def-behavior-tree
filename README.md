@@ -1,4 +1,5 @@
-# Native extension template
-This template contains the basic setup for creation of a Defold native extension.
+Installation
+You can use the modules from this project in your own project by adding this project as a Defold library dependency. Open your game.project file and in the dependencies field under project add:
 
-You can learn more about native extensions in the [official manual](https://www.defold.com/manuals/extensions/).
+https://github.com/s-kania/def-behavior-tree/archive/master.zip
+Or point to the ZIP file of a specific release.
