@@ -25,44 +25,39 @@ function BehaviorTree:initialize(config)
   if type(self.tree) == "string" then
     self.tree = Registry.getNode(self.tree)
   end
+  -- przniesc ustawianie obiektu tutaj
 end
 
+-- tu sie zaczyna zabawa
 function BehaviorTree:run(object)
-  if self.started then
-    Node.running(self) --call running if we have control
+  if self.running then -- to na początek będzie false, ale jesli sprobojemy drugi raz odpalic drzewo, nie wiem co zrobi
+    return --call running if we have control
   else
-    self.started = true
-    self.object = object or self.object
-    self.rootNode = Registry.getNode(self.tree)
-    self.rootNode:setControl(self)
-    self.rootNode:start(self.object)
-    self.rootNode:call_run(self.object)
+    self.running = true
+    self.object = object or self.object -- obiekt np ship
+    self.rootNode = Registry.getNode(self.tree) -- pierwszy node z drzewa, w przypadku simple sailor jest to repeat_until_fail
+    self.rootNode:setParentNode(self) -- ustawia kontrole, ja bym nazwal to parentNode
+    self.rootNode:start(self.object) -- odpala inicjalizator taska, w moim przypadku nic
+    self.rootNode:run(self.object) -- to jest pojebane bo ustawia te dziwne globalne sukcesy z NODE, ktore moga się plątać z innymi
   end
 end
 
 function BehaviorTree:restart()
     self:fail()
-    self.started = true
-    self.rootNode:setControl(self)
+    self.running = true
+    self.rootNode:setParentNode(self)
     self.rootNode:start(self.object)
-    self.rootNode:call_run(self.object)
-end
-
-function BehaviorTree:running()
-  Node.running(self)
-  self.started = false
+    self.rootNode:run(self.object)
 end
 
 function BehaviorTree:success()
-  self.rootNode:finish(self.object);
-  self.started = false
-  Node.success(self)
+  self.rootNode:finish(self.object)
+  self.running = false
 end
 
 function BehaviorTree:fail()
-  self.rootNode:finish(self.object);
-  self.started = false
-  Node.fail(self)
+  self.rootNode:finish(self.object)
+  self.running = false
 end
 
 return BehaviorTree

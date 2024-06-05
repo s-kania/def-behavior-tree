@@ -8,19 +8,19 @@ function Random:start(object)
   for index = 1, #self.nodes do
     if self.cumulativeChances[index] >= random_number then
       self.actualTask = index
-      break
+      break -- TODO moze tutaj jest blad z BT i tym break
     end
   end
 end
 
 function Random:success()
   BranchNode.success(self)
-  self.control:success()
+  self.parent:success()
 end
 
 function Random:fail()
   BranchNode.fail(self)
-  self.control:fail()
+  self.parent:fail()
 end
 
 return Random

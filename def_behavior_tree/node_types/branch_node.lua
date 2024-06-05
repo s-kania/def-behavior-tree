@@ -23,15 +23,11 @@ function BranchNode:_run(object)
       self.nodes[self.actualTask] = self.node
     end
     self.node:start(object)
-    self.node:setControl(self)
+    self.node:setParentNode(self)
   end
   self.node:run(object)
 end
 
-function BranchNode:running()
-  self.nodeRunning = true
-  self.control:running()
-end
 
 function BranchNode:success()
   self.nodeRunning = false

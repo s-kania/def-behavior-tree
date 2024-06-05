@@ -3,7 +3,7 @@ local Priority = class("Priority", BranchNode)
 
 function Priority:success()
   BranchNode.success(self)
-  self.control:success()
+  self.parent:success()
 end
 
 function Priority:fail()
@@ -12,7 +12,7 @@ function Priority:fail()
   if self.actualTask <= #self.nodes then
     self:_run(self.object)
   else
-    self.control:fail()
+    self.parent:fail()
   end
 end
 

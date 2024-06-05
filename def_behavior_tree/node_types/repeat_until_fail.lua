@@ -13,7 +13,7 @@ end
 
 function RepeatUntilFail:fail()
   BranchNode.success(self)
-  self.control:success()
+  self.parent:success()
 end
 
 return RepeatUntilFail

@@ -16,12 +16,6 @@ function ActivePriority:fail()
   Priority.fail(self)
 end
 
-function ActivePriority:running()
-  self:_finishRunningNode()
-  self.runningTask = self.actualTask
-  self.control:running()
-  self.actualTask = 1
-end
 
 function ActivePriority:_finishRunningNode()
   if self.runningTask and self.runningTask > self.actualTask then

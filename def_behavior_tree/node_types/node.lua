@@ -12,37 +12,25 @@ function Node:start() end
 function Node:finish() end
 function Node:run() end
 
-function Node:call_run(object)
-  success = function() self:success() end
-  fail = function()    self:fail() end
-  running = function() self:running() end
-  self:run(object)
-  success, fail, running = nil,nil,nil
-end
 
 function Node:setObject(object)
   self.object = object
 end
 
-function Node:setControl(control)
-  self.control = control
+function Node:setParentNode(parent)
+  self.parent = parent
 end
 
-function Node:running()
-  if self.control then
-    self.control:running(self)
-  end
-end
 
 function Node:success()
-  if self.control then
-    self.control:success()
+  if self.parent then
+    self.parent:success()
   end
 end
 
 function Node:fail()
-  if self.control then
-    self.control:fail()
+  if self.parent then
+    self.parent:fail()
   end
 end
 

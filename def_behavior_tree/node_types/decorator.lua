@@ -20,8 +20,8 @@ function Decorator:finish(object)
 end
 
 function Decorator:run(object)
-  self.node:setControl(self)
-  self.node:call_run(object)
+  self.node:setParentNode(self)
+  self.node:run(object)
 end
 
 return Decorator

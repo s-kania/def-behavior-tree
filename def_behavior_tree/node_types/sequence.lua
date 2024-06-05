@@ -7,13 +7,13 @@ function Sequence:success()
   if self.actualTask <= #self.nodes then
     self:_run(self.object)
   else
-    self.control:success()
+    self.parent:success()
   end
 end
 
 function Sequence:fail()
   BranchNode.fail(self)
-  self.control:fail()
+  self.parent:fail()
 end
 
 return Sequence
