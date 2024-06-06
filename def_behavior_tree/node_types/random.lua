@@ -1,8 +1,9 @@
 local BranchNode  = require "def_behavior_tree.node_types.branch_node"
 local Random = class("Random", BranchNode)
 
-function Random:start(object)
-  BranchNode.start(self, object)
+function Random:start(payload)
+  BranchNode.start(self, payload)
+  -- TODO rnd nie ma w tej paczce
   local random_number = rnd.range(1, self.cumulativeChances[#self.cumulativeChances])
 
   for index = 1, #self.nodes do

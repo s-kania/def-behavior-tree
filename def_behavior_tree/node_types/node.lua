@@ -1,4 +1,3 @@
-local Registry  = require "def_behavior_tree.registry"
 local Node      = class("Node")
 
 function Node:initialize(config)
@@ -13,14 +12,13 @@ function Node:finish() end
 function Node:run() end
 
 
-function Node:setObject(object)
-  self.object = object
+function Node:setPayload(payload)
+  self.payload = payload
 end
 
-function Node:setParentNode(parent)
+function Node:setParent(parent)
   self.parent = parent
 end
-
 
 function Node:success()
   if self.parent then

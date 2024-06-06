@@ -11,17 +11,17 @@ function Decorator:setNode(node)
   self.node = Registry.getNode(node)
 end
 
-function Decorator:start(object)
-  self.node:start(object)
+function Decorator:start(payload)
+  self.node:start(payload)
 end
 
-function Decorator:finish(object)
-  self.node:finish(object)
+function Decorator:finish(payload)
+  self.node:finish(payload)
 end
 
-function Decorator:run(object)
-  self.node:setParentNode(self)
-  self.node:run(object)
+function Decorator:run(payload)
+  self.node:setParent(self)
+  self.node:run(payload)
 end
 
 return Decorator
