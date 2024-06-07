@@ -1,3 +1,5 @@
+local BehaviourTree = require "def_behavior_tree.behavior_tree"
+
 function init(self)
 	self.direction = go.get_rotation()
 	self.rot = vmath.quat()
@@ -11,6 +13,13 @@ function init(self)
 	self.fire_cooldown = 0
 	self.thrust = false
 	self.thrusting = false
+
+	self.bt_tree = BehaviourTree:new({
+		tree = "SHIP_BT",
+		payload = nil
+	})
+	
+	self.bt_tree:run()
 	
 	msg.post("#", "hide")
 end

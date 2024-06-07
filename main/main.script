@@ -1,6 +1,13 @@
+class = require "def_behavior_tree.middleclass"
+
+local BehaviourTree = require "def_behavior_tree.behavior_tree"
+local bt_templates = require "main.bt_templates"
+
 go.property("dummy", 0)
 
 function init(self)
+	BehaviourTree.register(bt_templates.NODES)
+
 	self.lives = 3
 	self.score = 0
 	
@@ -14,7 +21,7 @@ function on_message(self, message_id, message, sender)
 		msg.post("ui#gui", "get_ready")
 		msg.post("ui#gui", "set_lives", { lives = self.lives })
 		-- wait a bit, then start the game
-		go.animate("#", "dummy", go.PLAYBACK_ONCE_FORWARD, 1, go.EASING_LINEAR, 2.6, 0, function()
+		go.animate("#", "dummy", go.PLAYBACK_ONCE_FORWARD, 1, go.EASING_LINEAR, 1, 0, function()
 			msg.post("player#script", "go")
 			msg.post("ui#gui", "go")
 			msg.post("spawner#script", "run")
