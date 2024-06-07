@@ -1,0 +1,10 @@
+function init(self)
+	sprite.play_flipbook("#sprite", "explode")
+	sound.play("#sound")
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("animation_done") then
+		go.delete()
+	end
+end

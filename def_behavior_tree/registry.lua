@@ -28,6 +28,8 @@ function Registry.createNodeFromTemplate(template)
   end
   
   if template.nodes then
+    -- nodes powinny byc tworzone raczej na zadanie? albo przepisac z templatki
+    -- przy wczytywaniu jesli np wczytywany node jest ostatni, pod nodes mozna go przypisac
     local nodes = {}
     for i, node in ipairs(template.nodes) do
       nodes[i] = Registry.getNode(node)

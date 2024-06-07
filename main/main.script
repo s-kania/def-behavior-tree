@@ -1,0 +1,50 @@
+go.property("dummy", 0)
+
+function init(self)
+	self.lives = 3
+	self.score = 0
+	
+	msg.post("player#script", "hide")
+	msg.post("spawner#script", "stop")
+	msg.post("#", "new_game")
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("new_game") then
+		msg.post("ui#gui", "get_ready")
+		msg.post("ui#gui", "set_lives", { lives = self.lives })
+		-- wait a bit, then start the game
+		go.animate("#", "dummy", go.PLAYBACK_ONCE_FORWARD, 1, go.EASING_LINEAR, 2.6, 0, function()
+			msg.post("player#script", "go")
+			msg.post("ui#gui", "go")
+			msg.post("spawner#script", "run")
+			msg.post("ui#gui", "set_lives", { lives = self.lives - 1 })
+		end)
+	elseif message_id == hash("player_dies") then
+		msg.post("spawner#script", "stop")
+		self.lives = self.lives - 1
+		if self.lives <= 0 then
+			-- wait a bit before displaying game over screen
+			go.animate("#", "dummy", go.PLAYBACK_ONCE_FORWARD, 1, go.EASING_LINEAR, 1.0, 0, function()
+				msg.post("ui#gui", "game_over")
+			end)
+		else
+			msg.post("#", "retry")
+		end
+	elseif message_id == hash("retry") then
+		-- wait a bit, then clear the playfield
+		go.animate("#", "dummy", go.PLAYBACK_ONCE_FORWARD, 1, go.EASING_LINEAR, 2.0, 0, function()
+			msg.post("spawner#script", "delete_all")
+			-- wait some more, then restart
+			go.animate("#", "dummy", go.PLAYBACK_ONCE_FORWARD, 1, go.EASING_LINEAR, 1.0, 0, function()
+				msg.post("player#script", "go")
+				msg.post("spawner#script", "run")
+				msg.post("ui#gui", "set_lives", { lives = self.lives - 1 })
+				msg.post("ui#gui", "go")
+			end)
+		end)
+	elseif message_id == hash("meteor_destroyed") then
+		self.score = self.score + 100
+		msg.post("ui#gui", "set_score", { score = self.score })
+	end
+end

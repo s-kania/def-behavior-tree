@@ -1,0 +1,78 @@
+local function nextspawn(soon)
+	if soon then
+		return math.random(1, 4) / 8
+	else
+		-- between 0.5 and 2.5 seconds
+		return math.random(2, 10) / 4
+	end
+end
+
+function init(self)
+	math.randomseed(socket.gettime())
+	
+	self.w = tonumber(sys.get_config("display.width"))
+	self.h = tonumber(sys.get_config("display.height"))
+
+	self.meteors = {}
+	self.count = 0
+	self.t = 99999999
+end
+
+function update(self, dt)
+	self.t = self.t - dt
+
+	-- spawn a meteor when timer reaches 0
+	if self.t <= 0 then
+
+		self.count = self.count + 1
+		
+		-- start position outside screen edge
+		local startpos = vmath.vector3()
+		local r_sign = (math.random() < 0.5 and -1 or 1)
+
+		if math.random() > 0.5 then
+			-- above or below
+			startpos.x = math.random(0, self.w)
+			startpos.y = self.h/2 + (self.h/2 + 100) * r_sign
+		else
+			-- left or right
+			startpos.x = self.w/2 + (self.w/2 + 100) * r_sign
+			startpos.y = math.random(0, self.h)			
+		end
+
+		-- target player plus a random offset
+		local offset = vmath.vector3()
+		offset.x = math.random(-150, 150)
+		offset.y = math.random(-150, 150)
+		local target = go.get_position("/player") + offset
+		
+		-- velocity increases slightly with each spawn
+		local dir = vmath.normalize(target - startpos)
+		local d = self.count * 2
+		local v =  dir * math.random(10 + d, 100 + d)
+
+		local id = factory.create("#meteorfactory", startpos, nil, { velocity = v })
+		
+		-- randomize timer
+		self.t = nextspawn()
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("meteor_created") then
+		-- add meteor to bookkeeping list
+		self.meteors[sender.path] = true
+	elseif message_id == hash("meteor_destroyed") then
+		-- remove meteor from bookkeeping list
+		self.meteors[sender.path] = nil
+	elseif message_id == hash("stop") then
+		self.t = 99999999
+	elseif message_id == hash("run") then
+		self.t = nextspawn(true)
+	elseif message_id == hash("delete_all") then
+		for m,_ in pairs(self.meteors) do
+			go.delete(m)
+		end
+		self.meteors = {}
+	end
+end
