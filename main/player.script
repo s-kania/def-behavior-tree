@@ -1,51 +1,54 @@
 local BehaviourTree = require "def_behavior_tree.behavior_tree"
 
 function init(self)
-	self.direction = go.get_rotation()
-	self.rot = vmath.quat()
-	-- Base rotations half a lap in each direction
-	self.rot_left = vmath.quat_rotation_z(3.14159)
-	self.rot_right = vmath.quat_rotation_z(-3.14159)
+	self.state = {
+		direction = go.get_rotation(),
+		rot = vmath.quat(),
+		-- Base rotations half a lap in each direction
+		rot_left = vmath.quat_rotation_z(2),
+		rot_right = vmath.quat_rotation_z(-2),
+		
+		-- if speed = 1 then ship rotates 1/2 rotation each second.
+		max_speed = 30,
+		speed = 0,
+		fire_cooldown = 0,
+		thrust = false,
+		thrusting = false,
+	}
 	
-	-- if speed = 1 then ship rotates 1/2 rotation each second.
-	self.max_speed = 1.5
-	self.speed = 0
-	self.fire_cooldown = 0
-	self.thrust = false
-	self.thrusting = false
 
 	self.bt_tree = BehaviourTree:new({
 		tree = "SHIP_BT",
-		payload = nil
+		payload = self.state
 	})
 	
 	self.bt_tree:run()
-	
+
 	msg.post("#", "hide")
 end
 
 function update(self, dt)
-	self.direction = vmath.slerp(dt * self.speed, self.direction, self.direction * self.rot)
-	go.set_rotation(self.direction)
-	self.rot = vmath.quat()
+	self.state.direction = vmath.slerp(dt * self.state.speed, self.state.direction, self.state.direction * self.state.rot)
+	go.set_rotation(self.state.direction)
+	self.state.rot = vmath.quat()
 	
-	if self.speed <= self.max_speed then
-		self.speed = self.speed + (6 * dt)
+	if self.state.speed <= self.state.max_speed then
+		self.state.speed = self.state.speed + (16 * dt)
 	end
 
-	if self.thrust and not self.thrusting then
+	if self.state.thrust and not self.state.thrusting then
 		sprite.play_flipbook("#sprite", "ship_thrust")
-		self.thrusting = true
+		self.state.thrusting = true
 	end
 
-	if not self.thrust and self.thrusting then
+	if not self.state.thrust and self.state.thrusting then
 		sprite.play_flipbook("#sprite","ship_idle")
-		self.thrusting = false
+		self.state.thrusting = false
 	end
 		
 	
-	self.fire_cooldown = self.fire_cooldown - dt
-	self.thrust = false
+	-- self.state.fire_cooldown = self.state.fire_cooldown - dt
+	self.state.thrust = false
 end
 
 function on_message(self, message_id, message, sender)
@@ -67,26 +70,26 @@ end
 
 function on_input(self, action_id, action)
 	if action_id == hash("left") then
-		self.thrust = true
-		self.rot = self.rot_left
+		self.state.thrust = true
+		self.state.rot = self.state.rot_left
 		if action.pressed then
-			self.speed = 0
+			self.state.speed = 0
 		end
 	elseif action_id == hash("right") then
-		self.thrust = true
-		self.rot = self.rot_right
+		self.state.thrust = true
+		self.state.rot = self.state.rot_right
 		if action.pressed then
-			self.speed = 0
+			self.state.speed = 0
 		end
 	elseif action_id == hash("fire") then
-		if self.fire_cooldown > 0 then
+		if self.state.fire_cooldown > 0 then
 			return
 		end 
 
 		sound.play("#fire")
 
-		local offset = vmath.rotate(self.direction, vmath.vector3(0, 50, 0))
+		local offset = vmath.rotate(self.state.direction, vmath.vector3(0, 50, 0))
 		factory.create("#laserfactory", go.get_position() + offset)
-		self.fire_cooldown = 0.12
+		self.state.fire_cooldown = 0.12
 	end
 end

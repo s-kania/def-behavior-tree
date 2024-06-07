@@ -13,7 +13,7 @@ function init(self)
 	self.w = tonumber(sys.get_config("display.width"))
 	self.h = tonumber(sys.get_config("display.height"))
 
-	self.meteors = {}
+	meteors = {}
 	self.count = 0
 	self.t = 99999999
 end
@@ -61,18 +61,18 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == hash("meteor_created") then
 		-- add meteor to bookkeeping list
-		self.meteors[sender.path] = true
+		meteors[sender.path] = true
 	elseif message_id == hash("meteor_destroyed") then
 		-- remove meteor from bookkeeping list
-		self.meteors[sender.path] = nil
+		meteors[sender.path] = nil
 	elseif message_id == hash("stop") then
 		self.t = 99999999
 	elseif message_id == hash("run") then
 		self.t = nextspawn(true)
 	elseif message_id == hash("delete_all") then
-		for m,_ in pairs(self.meteors) do
+		for m,_ in pairs(meteors) do
 			go.delete(m)
 		end
-		self.meteors = {}
+		meteors = {}
 	end
 end

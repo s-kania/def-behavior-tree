@@ -8,7 +8,8 @@ go.property("dummy", 0)
 function init(self)
 	BehaviourTree.register(bt_templates.NODES)
 
-	self.lives = 3
+	lives = 3
+	meteors = {}
 	self.score = 0
 	
 	msg.post("player#script", "hide")
@@ -19,18 +20,18 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == hash("new_game") then
 		msg.post("ui#gui", "get_ready")
-		msg.post("ui#gui", "set_lives", { lives = self.lives })
+		msg.post("ui#gui", "set_lives", { lives = lives })
 		-- wait a bit, then start the game
 		go.animate("#", "dummy", go.PLAYBACK_ONCE_FORWARD, 1, go.EASING_LINEAR, 1, 0, function()
 			msg.post("player#script", "go")
 			msg.post("ui#gui", "go")
 			msg.post("spawner#script", "run")
-			msg.post("ui#gui", "set_lives", { lives = self.lives - 1 })
+			msg.post("ui#gui", "set_lives", { lives = lives - 1 })
 		end)
 	elseif message_id == hash("player_dies") then
 		msg.post("spawner#script", "stop")
-		self.lives = self.lives - 1
-		if self.lives <= 0 then
+		lives = lives - 1
+		if lives <= 0 then
 			-- wait a bit before displaying game over screen
 			go.animate("#", "dummy", go.PLAYBACK_ONCE_FORWARD, 1, go.EASING_LINEAR, 1.0, 0, function()
 				msg.post("ui#gui", "game_over")
@@ -46,7 +47,7 @@ function on_message(self, message_id, message, sender)
 			go.animate("#", "dummy", go.PLAYBACK_ONCE_FORWARD, 1, go.EASING_LINEAR, 1.0, 0, function()
 				msg.post("player#script", "go")
 				msg.post("spawner#script", "run")
-				msg.post("ui#gui", "set_lives", { lives = self.lives - 1 })
+				msg.post("ui#gui", "set_lives", { lives = lives - 1 })
 				msg.post("ui#gui", "go")
 			end)
 		end)
