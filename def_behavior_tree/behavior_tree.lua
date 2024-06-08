@@ -17,7 +17,8 @@ BehaviorTree.AlwaysFailDecorator     = require "def_behavior_tree.node_types.alw
 BehaviorTree.AlwaysSucceedDecorator  = require "def_behavior_tree.node_types.always_succeed_decorator"
 BehaviorTree.RepeatUntilFail         = require "def_behavior_tree.node_types.repeat_until_fail"
 
-BehaviorTree.register = Registry.register
+BehaviorTree.registerNodes = Registry.registerNodes
+BehaviorTree.registerTrees = Registry.registerTrees
 BehaviorTree.getNode = Registry.getNode
 
 BehaviorTree.version = "1.0.0"

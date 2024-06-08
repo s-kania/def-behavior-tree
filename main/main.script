@@ -6,7 +6,8 @@ local bt_templates = require "main.bt_templates"
 go.property("dummy", 0)
 
 function init(self)
-	BehaviourTree.register(bt_templates.NODES)
+	BehaviourTree.registerNodes(bt_templates.NODES)
+	BehaviourTree.registerTrees(bt_templates.TREES)
 
 	lives = 3
 	meteors = {}

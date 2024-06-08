@@ -13,10 +13,13 @@ local TASKS = {
 
 local SEQUENCES = {
 	DANCE_UNTIL_FIND_ENEMY = "DANCE_UNTIL_FIND_ENEMY",
+	SHIP_AI = "SHIP_AI",
 }
 
-local TREES = {
-	SHIP_BT = "SHIP_BT",
+M.TREES = {
+	SHIP_BT = {
+		main_node = SEQUENCES.SHIP_AI
+	},
 }
 
 M.NODES = {
@@ -142,14 +145,9 @@ M.NODES = {
 			},
 			TASKS.STOP_DANCE,
 		}
-		
 	},
 
-	--[[
-	**** TREES **** 
-	]]--
-
-	[TREES.SHIP_BT] = {
+	[SEQUENCES.SHIP_AI] = {
 		type = BehaviourTree.RepeatUntilFail,
 		nodes = {
 			TASKS.IS_ALIVE,
