@@ -3,12 +3,12 @@ local registeredTrees = {}
 
 local Registry = {}
 
-function Registry.addNodeDataToTree(tree, node_name, parent)
+function Registry.addNodeDataToTree(tree, node_name, parent_id)
   local node = Registry.getNode(node_name)
 
   local nodeData = {
-    parent = parent,
-    class = node.class.name,
+    parent_id = parent_id,
+    type = node.class,
     name = type(node_name) == "string" and node_name,
   }
 
@@ -16,13 +16,13 @@ function Registry.addNodeDataToTree(tree, node_name, parent)
   local node_index = #tree
 
   if node.nodes then
-    nodeData.childs = {}
+    nodeData.child_id_list = {}
     for _, node_name in ipairs(node.nodes) do
       local child_index = Registry.addNodeDataToTree(tree, node_name, node_index)
-      table.insert(nodeData.childs, child_index)
+      table.insert(nodeData.child_id_list, child_index)
     end
   elseif node.node then
-    nodeData.child = Registry.addNodeDataToTree(tree, node.node, node_index)
+    nodeData.child_id = Registry.addNodeDataToTree(tree, node.node, node_index)
   end
 
   return node_index
@@ -46,6 +46,10 @@ function Registry.registerNodes(nodeTemplates)
   print('registerNodes')
 end
 
+function Registry.getTreeNodes(tree_name)
+  return registeredTrees[tree_name]
+end
+
 -- could be name of template, node template, or node object
 function Registry.getNode(node)
   if type(node) == "string" then
@@ -56,6 +60,24 @@ function Registry.getNode(node)
   else
     return node
   end
+end
+
+function Registry.getNodeFromTree(treeState)
+  local treeTemplate = registeredTrees[treeState.name][treeState.runningNodeIndex]
+  local node = Registry.createNodeFromTree(treeTemplate)
+  node.treeState = treeState
+  return node
+end
+
+function Registry.createNodeFromTree(treeTemplate)
+  if treeTemplate.type.name == "Node" then
+    return Registry.getNode(treeTemplate.name)
+  end
+
+  return treeTemplate.type:new({
+    nodes_id_list = treeTemplate.child_id_list,
+    node_id = treeTemplate.child_id,
+  })
 end
 
 function Registry.createNodeFromTemplate(template)

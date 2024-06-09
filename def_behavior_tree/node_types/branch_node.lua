@@ -8,17 +8,16 @@ function BranchNode:start(payload)
 end
 
 function BranchNode:run(payload)
-  if self.actualTask <= #self.nodes then
+  if self.actualTask <= #self.nodes_id_list then
     self:_run(payload)
   end
 end
 
 function BranchNode:_run(payload)
-  local node = self.nodes[self.actualTask]
-  self.node = Registry.getNode(node)
-  if type(node) == "string" then
-    self.nodes[self.actualTask] = self.node
-  end
+  local nodeIndex = self.nodes_id_list[self.actualTask]
+  self.treeState:setRunningNodeIndex(nodeIndex)
+
+  self.node = Registry.getNodeFromTree(self.treeState)
 
   self.node:start(payload)
   self.node:setParent(self)

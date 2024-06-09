@@ -31,10 +31,8 @@ M.NODES = {
 		run = function(task, payload)
 			if lives > 0 then
 				task:success()
-				print('sukces jestem zywy')
 			else
 				task:fail()
-				print('jestem martwy')
 			end
 		end
 	},

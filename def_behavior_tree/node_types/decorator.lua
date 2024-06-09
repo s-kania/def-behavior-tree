@@ -4,17 +4,23 @@ local Decorator = class("Decorator", Node)
 
 
 function Decorator:start(payload)
-  self.node = Registry.getNode(self.node)
+  self.treeState:setRunningNodeIndex(self.node_id)
+
+  self.node = Registry.getNodeFromTree(self.treeState)
   self.node:start(payload)
 end
 
 function Decorator:finish(payload)
-  self.node = Registry.getNode(self.node)
+  self.treeState:setRunningNodeIndex(self.node_id)
+
+  self.node = Registry.getNodeFromTree(self.treeState)
   self.node:finish(payload)
 end
 
 function Decorator:run(payload)
-  self.node = Registry.getNode(self.node)
+  self.treeState:setRunningNodeIndex(self.node_id)
+
+  self.node = Registry.getNodeFromTree(self.treeState)
   self.node:setParent(self)
   self.node:run(payload)
 end

@@ -19,7 +19,7 @@ end
 
 function ActivePriority:_finishRunningNode()
   if self.runningTask and self.runningTask > self.actualTask then
-    local runningNode = Registry.getNode(self.nodes[self.runningTask]) 
+    local runningNode = Registry.getNode(self.nodes_id_list[self.runningTask]) 
     runningNode:finish()
   end
 end

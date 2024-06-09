@@ -6,7 +6,7 @@ function Random:start(payload)
   -- TODO rnd nie ma w tej paczce
   local random_number = rnd.range(1, self.cumulativeChances[#self.cumulativeChances])
 
-  for index = 1, #self.nodes do
+  for index = 1, #self.nodes_id_list do
     if self.cumulativeChances[index] >= random_number then
       self.actualTask = index
       break -- TODO moze tutaj jest blad z BT i tym break

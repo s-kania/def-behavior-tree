@@ -25,9 +25,14 @@ BehaviorTree.version = "1.0.0"
 
 function BehaviorTree:initialize(config)
   Node.initialize(self, config)
-  if type(self.tree) == "string" then
-    self.tree = Registry.getNode(self.tree)
-  end
+  self.treeState = {
+    name = config.treeName,
+    runningNodeIndex = 1,
+    setRunningNodeIndex = function(self, index)
+      self.runningNodeIndex = index
+      print('RunningNode', self.runningNodeIndex)
+    end,
+  }
 
   self.payload = config.payload
 end
@@ -38,7 +43,7 @@ function BehaviorTree:run()
     return
   else
     self.running = true
-    self.rootNode = Registry.getNode(self.tree)
+    self.rootNode = Registry.getNodeFromTree(self.treeState)
     self.rootNode:setParent(self)
     self.rootNode:start(self.payload)
     self.rootNode:run(self.payload)
@@ -48,6 +53,7 @@ end
 -- TODO refactor?
 function BehaviorTree:restart()
     self:fail()
+    self.treeState:setRunningNodeIndex(1)
     self.running = true
     self.rootNode:setParent(self)
     self.rootNode:start(self.payload)
