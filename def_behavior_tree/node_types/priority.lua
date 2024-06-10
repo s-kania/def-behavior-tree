@@ -10,7 +10,7 @@ function Priority:fail()
   BranchNode.fail(self)
   self.actualTask = self.actualTask + 1
   if self.actualTask <= #self.nodes_id_list then
-    self:_run(self.payload)
+    self:_run()
   else
     self.parent:fail()
   end

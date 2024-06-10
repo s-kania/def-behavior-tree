@@ -25,14 +25,15 @@ function BehaviorTree:initialize(config)
   Node.initialize(self, config)
   self.treeState = {
     name = config.treeName,
+    payload = config.payload,
     runningNodeIndex = 1,
     setRunningNodeIndex = function(self, index)
       self.runningNodeIndex = index
       print('RunningNode', self.runningNodeIndex)
     end,
+    -- TODO callback, jedno drzewo moze miec tylko jednego callbacka aktualnego
+    -- ale statek moze plynac a drzewo robic inna akcje, np atakowac, wtedy callback plyniecia sie odpali
   }
-
-  self.payload = config.payload
 end
 
 -- tu sie zaczyna zabawa
@@ -43,8 +44,8 @@ function BehaviorTree:run()
     self.running = true
     self.rootNode = Registry.getNodeFromTree(self.treeState)
     self.rootNode:setParent(self)
-    self.rootNode:start(self.payload)
-    self.rootNode:run(self.payload)
+    self.rootNode:start(self.treeState.payload)
+    self.rootNode:run(self.treeState.payload)
   end
 end
 
@@ -54,17 +55,17 @@ function BehaviorTree:restart()
     self.treeState:setRunningNodeIndex(1)
     self.running = true
     self.rootNode:setParent(self)
-    self.rootNode:start(self.payload)
-    self.rootNode:run(self.payload)
+    self.rootNode:start(self.treeState.payload)
+    self.rootNode:run(self.treeState.payload)
 end
 
 function BehaviorTree:success()
-  self.rootNode:finish(self.payload)
+  self.rootNode:finish(self.treeState.payload)
   self.running = false
 end
 
 function BehaviorTree:fail()
-  self.rootNode:finish(self.payload)
+  self.rootNode:finish(self.treeState.payload)
   self.running = false
 end
 

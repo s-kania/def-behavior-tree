@@ -11,11 +11,6 @@ function Node:start() end
 function Node:finish() end
 function Node:run() end
 
-
-function Node:setPayload(payload)
-  self.payload = payload
-end
-
 function Node:setParent(parent)
   self.parent = parent
 end
