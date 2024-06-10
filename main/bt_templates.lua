@@ -134,7 +134,7 @@ M.NODES = {
 				type = BehaviourTree.RepeatUntilFail,
 				nodes = {
 					{
-						decorator = BehaviourTree.InvertDecorator,
+						type = BehaviourTree.InvertDecorator,
 						node = TASKS.SELECT_CLOSEST_METEOR,
 					},
 					TASKS.DANCE,

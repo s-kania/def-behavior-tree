@@ -18,7 +18,7 @@ function init(self)
 	
 
 	self.bt_tree = BehaviourTree:new({
-		tree = "SHIP_AI",
+		treeName = "SHIP_BT",
 		payload = self.state
 	})
 	

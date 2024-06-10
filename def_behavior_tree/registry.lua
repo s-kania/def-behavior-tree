@@ -3,124 +3,71 @@ local registeredTrees = {}
 
 local Registry = {}
 
-function Registry.addNodeDataToTree(tree, node_name, parent_id)
-  local node = Registry.getNode(node_name)
+--[[
+  registeredNodes -> nodes created by user
+  registeredTrees -> node tree with parent-child relation based on index
+  thanks to this we can traverse on tree, save, load
+]]
+function Registry.registerTemplates(templates)
+  -- nodes
+  registeredNodes = templates.NODES
 
-  local nodeData = {
+  -- trees
+  for tree_name, data in pairs(templates.TREES) do
+    registeredTrees[tree_name] = {}
+    Registry.addNodeTemplateToTree(registeredTrees[tree_name], data.main_node)
+  end
+end
+
+function Registry.addNodeTemplateToTree(tree, template, parent_id)
+  local template, template_name = Registry.getNodeTemplate(template)
+
+  local tree_template = {
+    name = template_name or template.type.name,
+    type = template.type,
     parent_id = parent_id,
-    type = node.class,
-    name = type(node_name) == "string" and node_name,
+    start = template.start,
+    finish = template.finish,
+    run = template.run,
   }
 
-  table.insert(tree, nodeData)
+  --insert tree_template to get parent id for childs
+  table.insert(tree, tree_template)
   local node_index = #tree
 
-  if node.nodes then
-    nodeData.child_id_list = {}
-    for _, node_name in ipairs(node.nodes) do
-      local child_index = Registry.addNodeDataToTree(tree, node_name, node_index)
-      table.insert(nodeData.child_id_list, child_index)
+  if template.nodes then --sequences
+    tree_template.nodes_id_list = {}
+
+    for _, template_data in ipairs(template.nodes) do
+      local child_index = Registry.addNodeTemplateToTree(tree, template_data, node_index)
+      table.insert(tree_template.nodes_id_list, child_index)
     end
-  elseif node.node then
-    nodeData.child_id = Registry.addNodeDataToTree(tree, node.node, node_index)
+  elseif template.node then --decorators
+    tree_template.node_id = Registry.addNodeTemplateToTree(tree, template.node, node_index)
   end
 
   return node_index
 end
 
-function Registry.registerTrees(treesData)
-  local nodes = registeredNodes
-  for tree_name, data in pairs(treesData) do
-    registeredTrees[tree_name] = {}
-    Registry.addNodeDataToTree(registeredTrees[tree_name], data.main_node)
+function Registry.getNodeTemplate(template)
+  if type(template) == "string" then --registered task or sequence
+    return registeredNodes[template], template
   end
-
-  print('registerTrees')
-end
-
-function Registry.registerNodes(nodeTemplates)
-  for name, template in pairs(nodeTemplates) do
-    registeredNodes[name] = template
-  end
-
-  print('registerNodes')
-end
-
-function Registry.getTreeNodes(tree_name)
-  return registeredTrees[tree_name]
-end
-
--- could be name of template, node template, or node object
-function Registry.getNode(node)
-  if type(node) == "string" then
-    local template = registeredNodes[node]
-    return Registry.createNodeFromTemplate(template)
-  elseif node.type or node.decorator then
-    return Registry.createNodeFromTemplate(node)
-  else
-    return node
-  end
+  return template --pure node in registeredNodes
 end
 
 function Registry.getNodeFromTree(treeState)
   local treeTemplate = registeredTrees[treeState.name][treeState.runningNodeIndex]
-  local node = Registry.createNodeFromTree(treeTemplate)
-  node.treeState = treeState
-  return node
-end
-
-function Registry.createNodeFromTree(treeTemplate)
-  if treeTemplate.type.name == "Node" then
-    return Registry.getNode(treeTemplate.name)
-  end
 
   return treeTemplate.type:new({
-    nodes_id_list = treeTemplate.child_id_list,
-    node_id = treeTemplate.child_id,
-  })
-end
-
-function Registry.createNodeFromTemplate(template)
-  if template.decorator then
-    return template.decorator:new({
-      node = template.node
-    })
-  end
-  
-  if template.nodes then
-    -- nodes powinny byc tworzone raczej na żądanie? albo przepisac z templatki
-    -- przy wczytywaniu jesli np wczytywany node jest ostatni, pod nodes mozna go przypisac
-    -- local nodes = {}
-    -- for i, node in ipairs(template.nodes) do
-    --   nodes[i] = Registry.getNode(node)
-    -- end
-
-    local config = {
-      nodes = template.nodes
-    }
-
-    -- for Random type
-    if template.chances then
-      if not template.cumulativeChances then
-        local cumulativeChances = {}
-        
-        for i = 1, #template.chances do
-          cumulativeChances[i] = template.chances[i] + (cumulativeChances[i - 1] or 0)
-        end
-
-        template.cumulativeChances = cumulativeChances
-      end
-
-      config.cumulativeChances = template.cumulativeChances
-    end
-    
-    return template.type:new(config)
-  end
-
-  return template.type:new({
-    start = template.start,
-    finish = template.finish,
-    run = template.run,
+    parent_id = treeTemplate.parent_id,
+    start = treeTemplate.start,
+    finish = treeTemplate.finish,
+    run = treeTemplate.run,
+    nodes_id_list = treeTemplate.nodes_id_list,
+    node_id = treeTemplate.node_id,
+    chances = treeTemplate.chances, -- for random node
+    treeState = treeState,
   })
 end
 

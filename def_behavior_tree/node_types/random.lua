@@ -3,6 +3,21 @@ local Random = class("Random", BranchNode)
 
 function Random:start(payload)
   BranchNode.start(self, payload)
+
+  if self.chances then
+    if not self.cumulativeChances then
+      local cumulativeChances = {}
+      
+      for i = 1, #self.chances do
+        cumulativeChances[i] = self.chances[i] + (cumulativeChances[i - 1] or 0)
+      end
+
+      self.cumulativeChances = cumulativeChances
+    end
+
+    self.cumulativeChances = self.cumulativeChances
+  end
+
   -- TODO rnd nie ma w tej paczce
   local random_number = rnd.range(1, self.cumulativeChances[#self.cumulativeChances])
 
