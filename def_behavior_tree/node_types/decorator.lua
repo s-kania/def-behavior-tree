@@ -22,6 +22,7 @@ function Decorator:run(payload)
 
   self.node = Registry.getNodeFromTree(self.treeState)
   self.node:setParent(self)
+
   self.node:run(payload)
 end
 

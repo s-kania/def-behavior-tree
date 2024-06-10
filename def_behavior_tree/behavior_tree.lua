@@ -44,6 +44,7 @@ function BehaviorTree:run()
     self.running = true
     self.rootNode = Registry.getNodeFromTree(self.treeState)
     self.rootNode:setParent(self)
+
     self.rootNode:start(self.treeState.payload)
     self.rootNode:run(self.treeState.payload)
   end
@@ -55,6 +56,7 @@ function BehaviorTree:restart()
     self.treeState:setRunningNodeIndex(1)
     self.running = true
     self.rootNode:setParent(self)
+
     self.rootNode:start(self.treeState.payload)
     self.rootNode:run(self.treeState.payload)
 end
