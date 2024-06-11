@@ -1,0 +1,49 @@
+local BehaviourTree = require "def_behavior_tree.behavior_tree"
+
+local function create_node_button(node_index, tree_template)
+    local node_template = tree_template[node_index]
+
+    if node_template.nodes_id_list then
+        if imgui.tree_node(node_template.name, imgui.TREENODE_DEFAULT_OPEN) then
+                for _, node_index in ipairs(node_template.nodes_id_list) do
+                    create_node_button(node_index, tree_template)
+                end
+            imgui.tree_pop()
+        end
+    elseif node_template.node_id then
+        if imgui.tree_node(node_template.name, imgui.TREENODE_DEFAULT_OPEN) then
+                create_node_button(node_template.node_id, tree_template)
+            imgui.tree_pop()
+        end
+    else
+        imgui.button(node_template.name, 180, 20)
+    end
+
+    if node_index == bt_tree.treeState.runningNodeIndex then
+        imgui.same_line()
+        imgui.text_colored("Active", 0, 1, 0, 1 )
+    end
+end
+
+local function update_bt_tree(self)
+    local tree_template = BehaviourTree.getTreeTemplate("SHIP_BT")
+
+    if not tree_template then
+        return
+    end
+
+	if imgui.tree_node("SHIP_BT", imgui.TREENODE_DEFAULT_OPEN) then
+        create_node_button(1, tree_template)
+		imgui.tree_pop()
+	end
+end
+
+function init(self)
+	imgui.set_ini_filename()
+end
+
+function update(self, dt)
+    imgui.begin_window("Hello, world!")
+        update_bt_tree(self)
+	imgui.end_window()
+end

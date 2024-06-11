@@ -16,15 +16,19 @@ function Node:setParent(parent)
 end
 
 function Node:success()
-  if self.parent then
-    self.parent:success()
-  end
+  timer.delay(0.2, false, function ()
+    if self.parent then
+      self.parent:success()
+    end
+  end)
 end
 
 function Node:fail()
-  if self.parent then
-    self.parent:fail()
-  end
+  timer.delay(0.2, false, function ()
+    if self.parent then
+      self.parent:fail()
+    end
+  end)
 end
 
 return Node

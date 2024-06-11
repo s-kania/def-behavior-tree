@@ -1,4 +1,5 @@
 local BehaviourTree = require "def_behavior_tree.behavior_tree"
+bt_tree = {}
 
 function init(self)
 	self.state = {
@@ -17,12 +18,12 @@ function init(self)
 	}
 	
 
-	self.bt_tree = BehaviourTree:new({
+	bt_tree = BehaviourTree:new({
 		treeName = "SHIP_BT",
 		payload = self.state
 	})
 	
-	self.bt_tree:run()
+	bt_tree:run()
 
 	msg.post("#", "hide")
 end

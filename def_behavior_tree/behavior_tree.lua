@@ -18,6 +18,7 @@ BehaviorTree.AlwaysSucceedDecorator  = require "def_behavior_tree.node_types.alw
 BehaviorTree.RepeatUntilFail         = require "def_behavior_tree.node_types.repeat_until_fail"
 
 BehaviorTree.registerTemplates = Registry.registerTemplates
+BehaviorTree.getTreeTemplate = Registry.getTreeTemplate
 
 BehaviorTree.version = "1.0.0"
 
@@ -29,7 +30,6 @@ function BehaviorTree:initialize(config)
     runningNodeIndex = 1,
     setRunningNodeIndex = function(self, index)
       self.runningNodeIndex = index
-      print('RunningNode', self.runningNodeIndex)
     end,
     -- TODO callback, jedno drzewo moze miec tylko jednego callbacka aktualnego
     -- ale statek moze plynac a drzewo robic inna akcje, np atakowac, wtedy callback plyniecia sie odpali

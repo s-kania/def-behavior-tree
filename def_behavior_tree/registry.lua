@@ -71,4 +71,8 @@ function Registry.getNodeFromTree(treeState)
   })
 end
 
+function Registry.getTreeTemplate(treeName)
+  return registeredTrees[treeName]
+end
+
 return Registry
