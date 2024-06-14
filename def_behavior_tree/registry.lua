@@ -60,6 +60,7 @@ function Registry.getNodeFromTree(treeState)
   local treeTemplate = registeredTrees[treeState.name][treeState.runningNodeIndex]
 
   return treeTemplate.type:new({
+    _index = treeState.runningNodeIndex,
     parent_id = treeTemplate.parent_id,
     start = treeTemplate.start,
     finish = treeTemplate.finish,

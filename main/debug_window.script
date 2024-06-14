@@ -1,27 +1,40 @@
+node_show_delay = 1
 local BehaviourTree = require "def_behavior_tree.behavior_tree"
+
+local function show_node_state(node_index)
+    if bt_tree.treeState.nodes_history[node_index] then
+        local node_state = bt_tree.treeState.nodes_history[node_index]
+        imgui.same_line()
+        if node_state.success then
+            imgui.text_colored("Success", 0, 1, 0, node_state.delay )
+        else
+            imgui.text_colored("Fail", 1, 0, 0, node_state.delay )
+        end
+    end
+end
 
 local function create_node_button(node_index, tree_template)
     local node_template = tree_template[node_index]
 
     if node_template.nodes_id_list then
         if imgui.tree_node(node_template.name, imgui.TREENODE_DEFAULT_OPEN) then
+                show_node_state(node_index)
                 for _, node_index in ipairs(node_template.nodes_id_list) do
                     create_node_button(node_index, tree_template)
                 end
             imgui.tree_pop()
         end
+ 
     elseif node_template.node_id then
         if imgui.tree_node(node_template.name, imgui.TREENODE_DEFAULT_OPEN) then
+                show_node_state(node_index)
                 create_node_button(node_template.node_id, tree_template)
             imgui.tree_pop()
         end
-    else
-        imgui.button(node_template.name, 180, 20)
-    end
 
-    if node_index == bt_tree.treeState.runningNodeIndex then
-        imgui.same_line()
-        imgui.text_colored("Active", 0, 1, 0, 1 )
+    else
+        imgui.button(node_template.name, 160, 20)
+        show_node_state(node_index)
     end
 end
 
@@ -32,10 +45,7 @@ local function update_bt_tree(self)
         return
     end
 
-	if imgui.tree_node("SHIP_BT", imgui.TREENODE_DEFAULT_OPEN) then
-        create_node_button(1, tree_template)
-		imgui.tree_pop()
-	end
+    create_node_button(1, tree_template)
 end
 
 function init(self)
@@ -43,6 +53,10 @@ function init(self)
 end
 
 function update(self, dt)
+    for key, state in pairs(bt_tree.treeState.nodes_history) do
+        state.delay = state.delay - dt
+    end
+
     imgui.begin_window("Hello, world!")
         update_bt_tree(self)
 	imgui.end_window()

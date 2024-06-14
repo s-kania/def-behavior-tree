@@ -14,7 +14,7 @@ end
 
 function BranchNode:_run()
   local nodeIndex = self.nodes_id_list[self.actualTask]
-  self.treeState:setRunningNodeIndex(nodeIndex)
+  self.treeState:setRunningNodeIndex(nodeIndex) -- TODO ustawianie running node w node lub branch node po odpaleniu
 
   self.node = Registry.getNodeFromTree(self.treeState)
   self.node:setParent(self)
@@ -25,11 +25,21 @@ end
 
 
 function BranchNode:success()
+  self.treeState.nodes_history[self._index] = {
+    success = true,
+    delay = node_show_delay,
+  }
+
   self.node:finish(self.treeState.payload)
   self.node = nil
 end
 
 function BranchNode:fail()
+  self.treeState.nodes_history[self._index] = {
+    success = false,
+    delay = node_show_delay,
+  }
+
   self.node:finish(self.treeState.payload)
   self.node = nil
 end

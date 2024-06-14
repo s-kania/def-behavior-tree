@@ -31,6 +31,7 @@ function BehaviorTree:initialize(config)
     setRunningNodeIndex = function(self, index)
       self.runningNodeIndex = index
     end,
+    nodes_history = {}
     -- TODO callback, jedno drzewo moze miec tylko jednego callbacka aktualnego
     -- ale statek moze plynac a drzewo robic inna akcje, np atakowac, wtedy callback plyniecia sie odpali
   }

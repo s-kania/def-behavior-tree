@@ -2,6 +2,7 @@ local BranchNode  = require "def_behavior_tree.node_types.branch_node"
 local RepeatUntilFail = class("RepeatUntilFail", BranchNode)
 
 function RepeatUntilFail:success()
+  BranchNode.success(self)
   -- łatwo przypisac aktualny actualTask sprawdzajas dlugosc listy childs z poziomu dziecka jesli wczytujemy na żądanie
   self.actualTask = self.actualTask + 1
   if self.actualTask <= #self.nodes_id_list then
@@ -13,7 +14,7 @@ function RepeatUntilFail:success()
 end
 
 function RepeatUntilFail:fail()
-  BranchNode.success(self)
+  BranchNode.fail(self)
   self.parent:success()
 end
 

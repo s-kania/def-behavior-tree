@@ -16,19 +16,23 @@ function Node:setParent(parent)
 end
 
 function Node:success()
-  timer.delay(0.2, false, function ()
-    if self.parent then
-      self.parent:success()
-    end
-  end)
+  self.treeState.nodes_history[self._index] = {
+    success = true,
+    delay = node_show_delay,
+  }
+  if self.parent then
+    self.parent:success()
+  end
 end
 
 function Node:fail()
-  timer.delay(0.2, false, function ()
-    if self.parent then
-      self.parent:fail()
-    end
-  end)
+  self.treeState.nodes_history[self._index] = {
+    success = false,
+    delay = node_show_delay,
+  }
+  if self.parent then
+    self.parent:fail()
+  end
 end
 
 return Node
