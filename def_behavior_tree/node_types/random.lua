@@ -23,7 +23,7 @@ function Random:start(payload)
 
   for index = 1, #self.nodes_id_list do
     if self.cumulativeChances[index] >= random_number then
-      self.actualTask = index
+      self.actualTaskIndex = index
       break -- TODO moze tutaj jest blad z BT i tym break
     end
   end

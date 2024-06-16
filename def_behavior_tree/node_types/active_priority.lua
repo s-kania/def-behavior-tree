@@ -9,7 +9,7 @@ function ActivePriority:success()
 end
 
 function ActivePriority:fail()
-  if self.runningTask == self.actualTask then
+  if self.runningTask == self.actualTaskIndex then
     -- The previously-running task just failed
     self.runningTask = nil
   end
@@ -18,7 +18,7 @@ end
 
 
 function ActivePriority:_finishRunningNode()
-  if self.runningTask and self.runningTask > self.actualTask then
+  if self.runningTask and self.runningTask > self.actualTaskIndex then
     local runningNode = Registry.getNode(self.nodes_id_list[self.runningTask]) 
     runningNode:finish()
   end

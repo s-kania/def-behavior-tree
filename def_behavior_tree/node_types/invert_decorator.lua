@@ -2,7 +2,7 @@ local Decorator  = require "def_behavior_tree.node_types.decorator"
 local InvertDecorator = class("InvertDecorator", Decorator)
 
 function InvertDecorator:success()
-  self.treeState.nodes_history[self._index] = {
+  self.treeState.nodes_history[self.id] = {
     success = false,
     delay = node_show_delay,
   }
@@ -10,7 +10,7 @@ function InvertDecorator:success()
 end
 
 function InvertDecorator:fail()
-  self.treeState.nodes_history[self._index] = {
+  self.treeState.nodes_history[self.id] = {
     success = true,
     delay = node_show_delay,
   }

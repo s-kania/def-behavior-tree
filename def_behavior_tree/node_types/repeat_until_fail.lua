@@ -4,11 +4,11 @@ local RepeatUntilFail = class("RepeatUntilFail", BranchNode)
 function RepeatUntilFail:success()
   BranchNode.success(self)
   -- łatwo przypisac aktualny actualTask sprawdzajas dlugosc listy childs z poziomu dziecka jesli wczytujemy na żądanie
-  self.actualTask = self.actualTask + 1
-  if self.actualTask <= #self.nodes_id_list then
+  self.actualTaskIndex = self.actualTaskIndex + 1
+  if self.actualTaskIndex <= #self.nodes_id_list then
     self:_run()
   else
-    self.actualTask = 1
+    self.actualTaskIndex = 1
     self:_run()
   end
 end

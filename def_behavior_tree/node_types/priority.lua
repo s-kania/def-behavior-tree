@@ -8,8 +8,8 @@ end
 
 function Priority:fail()
   BranchNode.fail(self)
-  self.actualTask = self.actualTask + 1
-  if self.actualTask <= #self.nodes_id_list then
+  self.actualTaskIndex = self.actualTaskIndex + 1
+  if self.actualTaskIndex <= #self.nodes_id_list then
     self:_run()
   else
     self.parent:fail()

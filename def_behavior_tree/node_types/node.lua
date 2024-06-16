@@ -16,7 +16,7 @@ function Node:setParent(parent)
 end
 
 function Node:success()
-  self.treeState.nodes_history[self._index] = {
+  self.treeState.nodes_history[self.id] = {
     success = true,
     delay = node_show_delay,
   }
@@ -26,7 +26,7 @@ function Node:success()
 end
 
 function Node:fail()
-  self.treeState.nodes_history[self._index] = {
+  self.treeState.nodes_history[self.id] = {
     success = false,
     delay = node_show_delay,
   }

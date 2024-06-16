@@ -56,11 +56,11 @@ function Registry.getNodeTemplate(template)
   return template --pure node in registeredNodes
 end
 
-function Registry.getNodeFromTree(treeState)
-  local treeTemplate = registeredTrees[treeState.name][treeState.runningNodeIndex]
+function Registry.getNodeFromTree(id, treeState)
+  local treeTemplate = registeredTrees[treeState.name][id]
 
   return treeTemplate.type:new({
-    _index = treeState.runningNodeIndex,
+    id = id,
     parent_id = treeTemplate.parent_id,
     start = treeTemplate.start,
     finish = treeTemplate.finish,
