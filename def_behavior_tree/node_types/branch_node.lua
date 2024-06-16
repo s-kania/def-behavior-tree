@@ -18,7 +18,7 @@ function BranchNode:_run()
   self.node = Registry.getNodeFromTree(nodeID, self.treeState)
   self.node:setParent(self)
 
-  self.treeState:setRunningNodeID(nodeID)
+  -- self.treeState:setRunningNodeID(nodeID)
   self.node:start(self.treeState.payload)
   self.node:run(self.treeState.payload)
 end

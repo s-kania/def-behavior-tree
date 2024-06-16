@@ -6,7 +6,7 @@ local Decorator = class("Decorator", Node)
 function Decorator:start(payload)
   self.node = Registry.getNodeFromTree(self.node_id, self.treeState)
 
-  self.treeState:setRunningNodeID(self.node_id)
+  -- self.treeState:setRunningNodeID(self.node_id)
   self.node:start(payload)
 end
 
@@ -14,14 +14,14 @@ function Decorator:run(payload)
   self.node = Registry.getNodeFromTree(self.node_id, self.treeState)
   self.node:setParent(self)
 
-  self.treeState:setRunningNodeID(self.node_id)
+  -- self.treeState:setRunningNodeID(self.node_id)
   self.node:run(payload)
 end
 
 function Decorator:finish(payload)
   self.node = Registry.getNodeFromTree(self.node_id, self.treeState)
 
-  self.treeState:setRunningNodeID(self.node_id)
+  -- self.treeState:setRunningNodeID(self.node_id)
   self.node:finish(payload)
 end
 
