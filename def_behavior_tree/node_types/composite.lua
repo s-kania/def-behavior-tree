@@ -1,18 +1,18 @@
 local Registry = require "def_behavior_tree.registry"
 local Node  = require "def_behavior_tree.node_types.node"
-local BranchNode = class("BranchNode", Node)
+local Composite = class("Composite", Node)
 
-function BranchNode:start()
+function Composite:start()
   self.actualTaskIndex = 1
 end
 
-function BranchNode:run()
+function Composite:run()
   if self.actualTaskIndex <= #self.nodes_id_list then
     self:_run()
   end
 end
 
-function BranchNode:_run()
+function Composite:_run()
   local nodeID = self.nodes_id_list[self.actualTaskIndex]
 
   self.node = Registry.getNodeFromTree(nodeID, self.treeState)
@@ -24,7 +24,7 @@ function BranchNode:_run()
 end
 
 
-function BranchNode:success()
+function Composite:success()
   self.treeState.nodes_history[self.id] = {
     success = true,
     delay = node_show_delay,
@@ -34,7 +34,7 @@ function BranchNode:success()
   self.node = nil
 end
 
-function BranchNode:fail()
+function Composite:fail()
   self.treeState.nodes_history[self.id] = {
     success = false,
     delay = node_show_delay,
@@ -44,4 +44,4 @@ function BranchNode:fail()
   self.node = nil
 end
 
-return BranchNode
+return Composite

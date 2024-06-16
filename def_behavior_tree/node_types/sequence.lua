@@ -1,8 +1,8 @@
-local BranchNode  = require "def_behavior_tree.node_types.branch_node"
-local Sequence = class("Sequence", BranchNode)
+local Composite  = require "def_behavior_tree.node_types.composite"
+local Sequence = class("Sequence", Composite)
 
 function Sequence:success()
-  BranchNode.success(self)
+  Composite.success(self)
   self.actualTaskIndex = self.actualTaskIndex + 1
   if self.actualTaskIndex <= #self.nodes_id_list then
     self:_run()
@@ -12,7 +12,7 @@ function Sequence:success()
 end
 
 function Sequence:fail()
-  BranchNode.fail(self)
+  Composite.fail(self)
   self.parent:fail()
 end
 

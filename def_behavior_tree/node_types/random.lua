@@ -1,8 +1,8 @@
-local BranchNode  = require "def_behavior_tree.node_types.branch_node"
-local Random = class("Random", BranchNode)
+local Composite  = require "def_behavior_tree.node_types.composite"
+local Random = class("Random", Composite)
 
 function Random:start(payload)
-  BranchNode.start(self, payload)
+  Composite.start(self, payload)
 
   if self.chances then
     if not self.cumulativeChances then
@@ -30,12 +30,12 @@ function Random:start(payload)
 end
 
 function Random:success()
-  BranchNode.success(self)
+  Composite.success(self)
   self.parent:success()
 end
 
 function Random:fail()
-  BranchNode.fail(self)
+  Composite.fail(self)
   self.parent:fail()
 end
 

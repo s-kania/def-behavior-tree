@@ -1,8 +1,8 @@
-local BranchNode  = require "def_behavior_tree.node_types.branch_node"
-local RepeatUntilFail = class("RepeatUntilFail", BranchNode)
+local Composite  = require "def_behavior_tree.node_types.composite"
+local RepeatUntilFail = class("RepeatUntilFail", Composite)
 
 function RepeatUntilFail:success()
-  BranchNode.success(self)
+  Composite.success(self)
   -- łatwo przypisac aktualny actualTask sprawdzajas dlugosc listy childs z poziomu dziecka jesli wczytujemy na żądanie
   self.actualTaskIndex = self.actualTaskIndex + 1
   if self.actualTaskIndex <= #self.nodes_id_list then
@@ -14,7 +14,7 @@ function RepeatUntilFail:success()
 end
 
 function RepeatUntilFail:fail()
-  BranchNode.fail(self)
+  Composite.fail(self)
   self.parent:success()
 end
 
