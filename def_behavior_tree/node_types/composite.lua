@@ -6,6 +6,10 @@ function Composite:start()
   self.actualTaskIndex = 1
 end
 
+-- w priority/sequence/repeat_until_fail uzywane jest _run aby pominac sprawdzanie actuaTaskIndex ktore jest wyzej
+-- a jest wyzej bo jest tez warunek else
+-- jednakze run tutaj moglby zwracac fail
+-- wtedy nie byloby potrzeby posiadania dwóch funkcji
 function Composite:run()
   if self.actualTaskIndex <= #self.nodes_id_list then
     self:_run()
