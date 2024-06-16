@@ -1,6 +1,12 @@
 local BehaviourTree = require "def_behavior_tree.behavior_tree"
 bt_tree = {}
 
+local function init_bt_debug(bt_tree)
+	bt_tree.treeState.nodes_history = {}
+
+	
+end
+
 function init(self)
 	self.state = {
 		direction = go.get_rotation(),
@@ -22,6 +28,8 @@ function init(self)
 		treeName = "SHIP_BT",
 		payload = self.state
 	})
+
+	init_bt_debug(bt_tree)
 	
 	bt_tree:run()
 
