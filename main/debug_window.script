@@ -1,6 +1,79 @@
 node_show_delay = 1
 local BehaviourTree = require "def_behavior_tree.behavior_tree"
 
+local function init_bt_debug()
+	--composite
+	local composite_success = BehaviourTree.Composite.success
+	local debug_composite_success = function (self)
+		self.treeState.nodes_history[self.id] = {
+			success = true,
+			delay = node_show_delay,
+		}
+		composite_success(self)
+	end
+	BehaviourTree.Composite.__declaredMethods.success = debug_composite_success
+	BehaviourTree.Composite.__instanceDict.success = debug_composite_success
+
+	local composite_fail = BehaviourTree.Composite.fail
+	local debug_composite_fail = function (self)
+		self.treeState.nodes_history[self.id] = {
+			success = false,
+			delay = node_show_delay,
+		}
+		composite_fail(self)
+	end
+	BehaviourTree.Composite.__declaredMethods.fail = debug_composite_fail
+	BehaviourTree.Composite.__instanceDict.fail = debug_composite_fail
+
+	--decorator
+	local decorator_success = BehaviourTree.Decorator.success
+	local debug_decorator_success = function (self)
+		self.treeState.nodes_history[self.id] = {
+			success = true,
+			delay = node_show_delay,
+		}
+		decorator_success(self)
+	end
+	BehaviourTree.Decorator.__declaredMethods.success = debug_decorator_success
+	BehaviourTree.Decorator.__instanceDict.success = debug_decorator_success
+
+	local decorator_fail = BehaviourTree.Decorator.fail
+	local debug_decorator_fail = function (self)
+		self.treeState.nodes_history[self.id] = {
+			success = false,
+			delay = node_show_delay,
+		}
+		decorator_fail(self)
+	end
+	BehaviourTree.Decorator.__declaredMethods.fail = debug_decorator_fail
+	BehaviourTree.Decorator.__instanceDict.fail = debug_decorator_fail
+
+	--node
+	local node_success = BehaviourTree.Node.success
+	local debug_node_success = function (self)
+		self.treeState.nodes_history[self.id] = {
+			success = true,
+			delay = node_show_delay,
+		}
+		node_success(self)
+	end
+	BehaviourTree.Node.__declaredMethods.success = debug_node_success
+	BehaviourTree.Node.__instanceDict.success = debug_node_success
+
+	local node_fail = BehaviourTree.Node.fail
+	local debug_node_fail = function (self)
+		self.treeState.nodes_history[self.id] = {
+			success = false,
+			delay = node_show_delay,
+		}
+		node_fail(self)
+	end
+	BehaviourTree.Node.__declaredMethods.fail = debug_node_fail
+	BehaviourTree.Node.__instanceDict.fail = debug_node_fail
+
+	print('ci')
+end
+
 local function show_node_state(node_index)
     if bt_tree.treeState.nodes_history[node_index] then
         local node_state = bt_tree.treeState.nodes_history[node_index]
@@ -50,6 +123,7 @@ end
 
 function init(self)
 	imgui.set_ini_filename()
+    init_bt_debug()
 end
 
 function update(self, dt)

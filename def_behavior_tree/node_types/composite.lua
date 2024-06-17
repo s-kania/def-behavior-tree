@@ -29,21 +29,11 @@ end
 
 
 function Composite:success()
-  self.treeState.nodes_history[self.id] = {
-    success = true,
-    delay = node_show_delay,
-  }
-
   self.node:finish(self.treeState.payload)
   self.node = nil
 end
 
 function Composite:fail()
-  self.treeState.nodes_history[self.id] = {
-    success = false,
-    delay = node_show_delay,
-  }
-
   self.node:finish(self.treeState.payload)
   self.node = nil
 end
