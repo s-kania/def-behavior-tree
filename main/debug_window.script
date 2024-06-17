@@ -131,7 +131,7 @@ function update(self, dt)
         state.delay = state.delay - dt
     end
 
-    imgui.begin_window("Hello, world!")
+    imgui.begin_window("Behavior tree - debug window")
         update_bt_tree(self)
 	imgui.end_window()
 end
