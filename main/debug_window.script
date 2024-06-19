@@ -1,3 +1,5 @@
+paused = false
+pause_fn = nil
 node_show_delay = 1
 local BehaviourTree = require "def_behavior_tree.behavior_tree"
 
@@ -6,7 +8,13 @@ local function success_debug(self, success_fn)
 		success = true,
 		delay = node_show_delay,
 	}
-	success_fn(self)
+	if paused then
+		pause_fn = function() -- TODO cos tu jest nie tak z kontekstem
+			success_fn(self)
+		end
+	else
+		success_fn(self)
+	end
 end
 
 local function fail_debug(self, fail_fn)
@@ -107,6 +115,19 @@ function update(self, dt)
     end
 
     imgui.begin_window("BehaviorTree - debug window")
+		if paused then
+			if imgui.button("Resume", 160, 20) then
+				local fn = pause_fn
+				paused = false
+				-- pause_fn()
+				pause_fn = nil
+				fn()
+			end
+		else
+			if imgui.button("Pause", 100, 20) then
+				paused = true
+			end
+		end
         update_bt_tree(self)
 	imgui.end_window()
 end
