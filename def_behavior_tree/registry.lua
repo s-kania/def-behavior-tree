@@ -49,6 +49,11 @@ function Registry.addNodeTemplateToTree(tree, template, parent_id)
   return node_index
 end
 
+-- to jest potrzebne, bo drzewo moze miec niezarejestrowane sekwencje
+-- ale jesli sa zarajestrowane taski, to mamy problem w postaci stringa
+-- dlatego go odzyskujemy z registeredNodes
+-- tego jednak mozna sie pozbyc, przekazujac template przy rejestracji drzewa
+-- to zadziala nawet jest zarejestrujemy wiele drzew
 function Registry.getNodeTemplate(template)
   if type(template) == "string" then --registered task or sequence
     return registeredNodes[template], template
