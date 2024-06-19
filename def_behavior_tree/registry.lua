@@ -1,29 +1,32 @@
-local registeredNodes = {}
 local registeredTrees = {}
 
 local Registry = {}
 
 --[[
-  registeredNodes -> nodes created by user
   registeredTrees -> node tree with parent-child relation based on index
   thanks to this we can traverse on tree, save, load
 ]]
 function Registry.registerTemplates(templates)
-  -- nodes
-  registeredNodes = templates.NODES
+  -- return template and it's name
+  local getNodeTemplate = function (template_data)
+    if type(template_data) == "string" then --registered task or sequence
+      return templates.NODES[template_data], template_data
+    end
+    return template_data, template_data.type.name --pure node in registeredNodes
+  end
 
-  -- trees
+  -- register trees
   for tree_name, data in pairs(templates.TREES) do
     registeredTrees[tree_name] = {}
-    Registry.addNodeTemplateToTree(registeredTrees[tree_name], data.main_node)
+    Registry.addNodeTemplateToTree(registeredTrees[tree_name], data.main_node, getNodeTemplate, nil)
   end
 end
 
-function Registry.addNodeTemplateToTree(tree, template, parent_id)
-  local template, template_name = Registry.getNodeTemplate(template)
+function Registry.addNodeTemplateToTree(tree, template_data, getNodeTemplate, parent_id)
+  local template, template_name = getNodeTemplate(template_data)
 
   local tree_template = {
-    name = template_name or template.type.name,
+    name = template_name,
     type = template.type,
     parent_id = parent_id,
     start = template.start,
@@ -39,26 +42,14 @@ function Registry.addNodeTemplateToTree(tree, template, parent_id)
     tree_template.nodes_id_list = {}
 
     for _, template_data in ipairs(template.nodes) do
-      local child_index = Registry.addNodeTemplateToTree(tree, template_data, node_index)
+      local child_index = Registry.addNodeTemplateToTree(tree, template_data, getNodeTemplate, node_index)
       table.insert(tree_template.nodes_id_list, child_index)
     end
   elseif template.node then --decorators
-    tree_template.node_id = Registry.addNodeTemplateToTree(tree, template.node, node_index)
+    tree_template.node_id = Registry.addNodeTemplateToTree(tree, template.node, getNodeTemplate, node_index)
   end
 
   return node_index
-end
-
--- to jest potrzebne, bo drzewo moze miec niezarejestrowane sekwencje
--- ale jesli sa zarajestrowane taski, to mamy problem w postaci stringa
--- dlatego go odzyskujemy z registeredNodes
--- tego jednak mozna sie pozbyc, przekazujac template przy rejestracji drzewa
--- to zadziala nawet jest zarejestrujemy wiele drzew
-function Registry.getNodeTemplate(template)
-  if type(template) == "string" then --registered task or sequence
-    return registeredNodes[template], template
-  end
-  return template --pure node in registeredNodes
 end
 
 function Registry.getNodeFromTree(id, treeState)
