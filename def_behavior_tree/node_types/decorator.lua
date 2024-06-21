@@ -7,7 +7,6 @@ function Decorator:fail() end
 
 function Decorator:start()
   self.node = self.treeState:getNode(self.node_id)
-  self.node:setParent(self)
 end
 
 function Decorator:run()

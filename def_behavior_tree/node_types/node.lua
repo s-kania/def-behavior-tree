@@ -7,36 +7,28 @@ function Node:initialize(config)
   end
 end
 
-function Node:_start(payload) end
-function Node:_run(payload) end
-function Node:_finish(payload) end
+function Node:_startTask(payload) end
+function Node:_runTask(payload) end
+function Node:_finishTask(payload) end
 
 function Node:start()
-  self._start(self, self.treeState.payload)
+  self._startTask(self, self.treeState.payload)
 end
 
 function Node:run()
-  self._run(self, self.treeState.payload)
+  self._runTask(self, self.treeState.payload)
 end
 
 function Node:finish()
-  self._finish(self, self.treeState.payload)
-end
-
-function Node:setParent(parent)
-  self.parent = parent
+  self._finishTask(self, self.treeState.payload)
 end
 
 function Node:success()
-  if self.parent then
-    self.parent:success()
-  end
+  self.treeState:getNode(self.parent_id):success()
 end
 
 function Node:fail()
-  if self.parent then
-    self.parent:fail()
-  end
+  self.treeState:getNode(self.parent_id):fail()
 end
 
 return Node

@@ -22,7 +22,6 @@ function Composite:_run()
   local nodeID = self.nodes_id_list[self.actualTaskIndex]
 
   self.node = self.treeState:getNode(nodeID)
-  self.node:setParent(self)
 
   -- self.treeState:setRunningNodeID(nodeID)
   self.node:start()

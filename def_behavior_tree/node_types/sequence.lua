@@ -7,13 +7,13 @@ function Sequence:success()
   if self.actualTaskIndex <= #self.nodes_id_list then
     self:_run()
   else
-    self.parent:success()
+    self.treeState:getNode(self.parent_id):success()
   end
 end
 
 function Sequence:fail()
   Composite.fail(self)
-  self.parent:fail()
+  self.treeState:getNode(self.parent_id):fail()
 end
 
 return Sequence

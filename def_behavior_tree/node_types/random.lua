@@ -31,12 +31,12 @@ end
 
 function Random:success()
   Composite.success(self)
-  self.parent:success()
+  self.treeState:getNode(self.parent_id):success()
 end
 
 function Random:fail()
   Composite.fail(self)
-  self.parent:fail()
+  self.treeState:getNode(self.parent_id):fail()
 end
 
 return Random

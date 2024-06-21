@@ -3,7 +3,7 @@ local Priority = class("Priority", Composite)
 
 function Priority:success()
   Composite.success(self)
-  self.parent:success()
+  self.treeState:getNode(self.parent_id):success()
 end
 
 function Priority:fail()
@@ -12,7 +12,7 @@ function Priority:fail()
   if self.actualTaskIndex <= #self.nodes_id_list then
     self:_run()
   else
-    self.parent:fail()
+    self.treeState:getNode(self.parent_id):fail()
   end
 end
 

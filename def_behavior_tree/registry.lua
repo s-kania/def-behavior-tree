@@ -58,9 +58,9 @@ function Registry.getNodeFromTree(id, treeState)
   return treeTemplate.type:new({
     id = id,
     parent_id = treeTemplate.parent_id,
-    _start = treeTemplate.start,
-    _run = treeTemplate.run,
-    _finish = treeTemplate.finish,
+    _startTask = treeTemplate.start,
+    _runTask = treeTemplate.run,
+    _finishTask = treeTemplate.finish,
     nodes_id_list = treeTemplate.nodes_id_list,
     node_id = treeTemplate.node_id,
     chances = treeTemplate.chances, -- for random node
