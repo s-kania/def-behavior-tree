@@ -21,7 +21,7 @@ function Composite:_run()
   -- ewentualnie do zadania implementujemy informacje o nextNode, ale to chyba pierwsza opcja lepsza
   local nodeID = self.nodes_id_list[self.actualTaskIndex]
 
-  self.node = Registry.getNodeFromTree(nodeID, self.treeState)
+  self.node = self.treeState:getNode(nodeID)
   self.node:setParent(self)
 
   -- self.treeState:setRunningNodeID(nodeID)

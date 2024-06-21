@@ -27,15 +27,38 @@ function BehaviorTree:initialize(config)
   self.treeState = {
     name = config.treeName,
     payload = config.payload,
-    -- runningNodeID = 1,
+    -- runningNodeID = config.runningNodeID or 1,
     -- setRunningNodeID = function(self, index)
     --   self.runningNodeID = index
     -- end,
     -- nodes_history = {}
     -- TODO callback, jedno drzewo moze miec tylko jednego callbacka aktualnego
     -- ale statek moze plynac a drzewo robic inna akcje, np atakowac, wtedy callback plyniecia sie odpali
+    created_nodes = {},
+    getNode = function(self, nodeID)
+      if self.created_nodes[nodeID] then
+        return self.created_nodes[nodeID]
+      end
+      local node = Registry.getNodeFromTree(nodeID, self)
+      self.created_nodes[nodeID] = node
+      return node
+    end
   }
+  -- self.nodes = {}
 end
+
+-- KONCEPCJA, w wyniku ktorej node raz stworzony nie musialby byc tworzony ponownie
+-- dzieki temu unikniemy ustawiania setParent
+-- dziecko po odpaleniu success/fail wyciaga node z drzewa i odpala odpowiednia funkcje
+-- dzieki temu przy wczytywaniu jesli node nie istnieje, po prostu go tworzymy i odpalamy
+-- mozna nawet zapisac stan danego noda ( co ja mowie, nawet nie trzeba zapisac aktualnego indeksu)
+-- rodzic pozna actualTask po dziecku wlasnie
+-- function BehaviorTree:getNodeFromTreeState(nodeID)
+--   if self.nodes[nodeID] then
+--     return self.nodes[nodeID]
+--   end
+--   self.nodes[nodeID] = Registry.getNodeFromTree(nodeID, self.treeState)
+-- end
 
 -- tu sie zaczyna zabawa
 function BehaviorTree:run()
@@ -46,6 +69,7 @@ function BehaviorTree:run()
     self.rootNode = Registry.getNodeFromTree(1, self.treeState)
     self.rootNode:setParent(self)
 
+    -- local dupa = self.treeState:getNode(4)
     -- self.treeState:setRunningNodeID(1) -- TODO przeniesc do start/run/finish
     self.rootNode:start(self.treeState.payload)
     self.rootNode:run(self.treeState.payload)
@@ -71,6 +95,10 @@ end
 function BehaviorTree:fail()
   self.rootNode:finish(self.treeState.payload)
   self.running = false
+end
+
+function BehaviorTree:goTo(nodeID)
+  local node = Registry.getNodeFromTree(nodeID, self.treeState)
 end
 
 return BehaviorTree

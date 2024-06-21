@@ -6,7 +6,7 @@ function Decorator:success() end
 function Decorator:fail() end
 
 function Decorator:start(payload)
-  self.node = Registry.getNodeFromTree(self.node_id, self.treeState)
+  self.node = self.treeState:getNode(self.node_id)
   self.node:setParent(self)
 end
 
