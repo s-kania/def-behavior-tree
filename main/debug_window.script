@@ -116,7 +116,7 @@ function update(self, dt)
 
     imgui.begin_window("BehaviorTree - debug window")
 		if paused then
-			if imgui.button("Resume", 160, 20) then
+			if imgui.button("Resume", 100, 20) then
 				local fn = pause_fn
 				paused = false
 				-- pause_fn()

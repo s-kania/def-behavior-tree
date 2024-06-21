@@ -17,6 +17,8 @@ function Composite:run()
 end
 
 function Composite:_run()
+  -- TODO w teori mozemy wyjebac actualTaskIndex i zamiast tego zrobic wyszukiwanie kolejnego node w liscie nodes_id_list,
+  -- ewentualnie do zadania implementujemy informacje o nextNode, ale to chyba pierwsza opcja lepsza
   local nodeID = self.nodes_id_list[self.actualTaskIndex]
 
   self.node = Registry.getNodeFromTree(nodeID, self.treeState)
