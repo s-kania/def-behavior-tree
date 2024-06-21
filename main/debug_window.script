@@ -9,7 +9,7 @@ local function success_debug(self, success_fn)
 		delay = node_show_delay,
 	}
 	if paused then
-		pause_fn = function() -- TODO cos tu jest nie tak z kontekstem
+		pause_fn = function()
 			success_fn(self)
 		end
 	else

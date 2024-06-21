@@ -15,6 +15,7 @@ function init(self)
 		fire_cooldown = 0,
 		thrust = false,
 		thrusting = false,
+		id = go.get_id()
 	}
 	
 

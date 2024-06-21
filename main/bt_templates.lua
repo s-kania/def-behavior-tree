@@ -90,10 +90,10 @@ M.NODES = {
 			local function shoot(self, handle, time_elapsed)
 				task.counter = task.counter + 1
 				local offset = vmath.rotate(payload.direction, vmath.vector3(0, 50, 0))
-				factory.create("#laserfactory", go.get_position() + offset)
+				factory.create("player#laserfactory", go.get_position(payload.id) + offset, go.get_rotation(payload.id))
 				if task.counter == 3 then
 					payload.target_meteor = nil
-				  	timer.cancel(handle) -- cancel timer after 10 calls
+				  	timer.cancel(handle)
 					task:success()
 				end
 			  end
