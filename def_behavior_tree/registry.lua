@@ -57,7 +57,7 @@ function Registry.getNodeFromTree(id, treeState)
 
   return treeTemplate.type:new({
     id = id,
-    parent_id = treeTemplate.parent_id,
+    parent_id = treeTemplate.parent_id or "_tree",
     _startTask = treeTemplate.start,
     _runTask = treeTemplate.run,
     _finishTask = treeTemplate.finish,

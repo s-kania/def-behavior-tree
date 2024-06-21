@@ -31,14 +31,12 @@ function BehaviorTree:initialize(config)
     -- setRunningNodeID = function(self, index)
     --   self.runningNodeID = index
     -- end,
-    -- nodes_history = {}
     -- TODO callback, jedno drzewo moze miec tylko jednego callbacka aktualnego
     -- ale statek moze plynac a drzewo robic inna akcje, np atakowac, wtedy callback plyniecia sie odpali
-    nodes = {},
+    nodes = {
+      _tree = self --rootNode parent_id is _tree, set in registry
+    },
     getNode = function(self, nodeID)
-      if nodeID == nil then
-        return self -- TODO tu jakos powinnismy zwrocic drzewo
-      end
       if self.nodes[nodeID] then
         return self.nodes[nodeID]
       end
