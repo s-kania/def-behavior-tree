@@ -71,8 +71,8 @@ function BehaviorTree:run()
 
     -- local dupa = self.treeState:getNode(4)
     -- self.treeState:setRunningNodeID(1) -- TODO przeniesc do start/run/finish
-    self.rootNode:start(self.treeState.payload)
-    self.rootNode:run(self.treeState.payload)
+    self.rootNode:start()
+    self.rootNode:run()
   end
 end
 
@@ -83,17 +83,17 @@ function BehaviorTree:restart()
     self.running = true
     self.rootNode:setParent(self)
 
-    self.rootNode:start(self.treeState.payload)
-    self.rootNode:run(self.treeState.payload)
+    self.rootNode:start()
+    self.rootNode:run()
 end
 
 function BehaviorTree:success()
-  self.rootNode:finish(self.treeState.payload)
+  self.rootNode:finish()
   self.running = false
 end
 
 function BehaviorTree:fail()
-  self.rootNode:finish(self.treeState.payload)
+  self.rootNode:finish()
   self.running = false
 end
 

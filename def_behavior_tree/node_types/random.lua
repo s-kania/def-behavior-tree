@@ -1,8 +1,8 @@
 local Composite  = require "def_behavior_tree.node_types.composite"
 local Random = class("Random", Composite)
 
-function Random:start(payload)
-  Composite.start(self, payload)
+function Random:start()
+  Composite.start(self)
 
   if self.chances then
     if not self.cumulativeChances then

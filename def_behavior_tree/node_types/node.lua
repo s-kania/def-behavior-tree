@@ -7,9 +7,21 @@ function Node:initialize(config)
   end
 end
 
-function Node:start() end
-function Node:finish() end
-function Node:run() end
+function Node:_start(payload) end
+function Node:_run(payload) end
+function Node:_finish(payload) end
+
+function Node:start()
+  self._start(self, self.treeState.payload)
+end
+
+function Node:run()
+  self._run(self, self.treeState.payload)
+end
+
+function Node:finish()
+  self._finish(self, self.treeState.payload)
+end
 
 function Node:setParent(parent)
   self.parent = parent

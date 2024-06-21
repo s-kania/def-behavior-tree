@@ -25,18 +25,18 @@ function Composite:_run()
   self.node:setParent(self)
 
   -- self.treeState:setRunningNodeID(nodeID)
-  self.node:start(self.treeState.payload)
-  self.node:run(self.treeState.payload)
+  self.node:start()
+  self.node:run()
 end
 
 
 function Composite:success()
-  self.node:finish(self.treeState.payload)
+  self.node:finish()
   self.node = nil
 end
 
 function Composite:fail()
-  self.node:finish(self.treeState.payload)
+  self.node:finish()
   self.node = nil
 end
 

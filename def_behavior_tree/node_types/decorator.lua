@@ -5,18 +5,18 @@ local Decorator = class("Decorator", Node)
 function Decorator:success() end
 function Decorator:fail() end
 
-function Decorator:start(payload)
+function Decorator:start()
   self.node = self.treeState:getNode(self.node_id)
   self.node:setParent(self)
 end
 
-function Decorator:run(payload)
-  self.node:start(payload)
-  self.node:run(payload)
+function Decorator:run()
+  self.node:start()
+  self.node:run()
 end
 
-function Decorator:finish(payload)
-  self.node:finish(payload)
+function Decorator:finish()
+  self.node:finish()
 end
 
 return Decorator
