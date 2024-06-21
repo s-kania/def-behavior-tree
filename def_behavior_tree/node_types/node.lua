@@ -24,11 +24,15 @@ function Node:finish()
 end
 
 function Node:success()
-  self.treeState:getNode(self.parent_id):success()
+  self:getParent():success()
 end
 
 function Node:fail()
-  self.treeState:getNode(self.parent_id):fail()
+  self:getParent():fail()
+end
+
+function Node:getParent()
+  return self.treeState:getNode(self.parent_id)
 end
 
 return Node

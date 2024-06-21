@@ -30,7 +30,7 @@ M.NODES = {
 		type = BehaviourTree.Task,
 		run = function(task, payload)
 			if lives > 0 then
-				task:fail()
+				task:success()
 			else
 				task:fail()
 			end

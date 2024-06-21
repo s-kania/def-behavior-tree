@@ -15,7 +15,7 @@ end
 
 function RepeatUntilFail:fail()
   Composite.fail(self)
-  self.treeState:getNode(self.parent_id):success()
+  self:getParent():success()
 end
 
 return RepeatUntilFail
