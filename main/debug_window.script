@@ -22,7 +22,13 @@ local function fail_debug(self, fail_fn)
 		success = false,
 		delay = node_show_delay,
 	}
-	fail_fn(self)
+    if paused then
+		pause_fn = function()
+			fail_fn(self)
+		end
+	else
+		fail_fn(self)
+	end
 end
 
 local function init_bt_debug()
