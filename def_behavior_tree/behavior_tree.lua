@@ -15,7 +15,7 @@ BehaviorTree.Decorator               = require "def_behavior_tree.node_types.dec
 BehaviorTree.InvertDecorator         = require "def_behavior_tree.node_types.invert_decorator"
 BehaviorTree.AlwaysFailDecorator     = require "def_behavior_tree.node_types.always_fail_decorator"
 BehaviorTree.AlwaysSucceedDecorator  = require "def_behavior_tree.node_types.always_succeed_decorator"
-BehaviorTree.RepeatUntilFail         = require "def_behavior_tree.node_types.repeat_until_fail"
+BehaviorTree.RepeatUntilFailDecorator= require "def_behavior_tree.node_types.repeat_until_fail_decorator"
 
 BehaviorTree.registerTemplates = Registry.registerTemplates
 BehaviorTree.getTreeTemplate = Registry.getTreeTemplate

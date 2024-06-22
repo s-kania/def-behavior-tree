@@ -131,14 +131,17 @@ M.NODES = {
 		type = BehaviourTree.Sequence,
 		nodes = {
 			{
-				type = BehaviourTree.RepeatUntilFail,
-				nodes = {
-					{
-						type = BehaviourTree.InvertDecorator,
-						node = TASKS.SELECT_CLOSEST_METEOR,
+				type = BehaviourTree.RepeatUntilFailDecorator,
+				node = {
+					type = BehaviourTree.Sequence,
+					nodes = {
+						{
+							type = BehaviourTree.InvertDecorator,
+							node = TASKS.SELECT_CLOSEST_METEOR,
+						},
+						TASKS.DANCE,
+						TASKS.WAIT,
 					},
-					TASKS.DANCE,
-					TASKS.WAIT,
 				},
 			},
 			TASKS.STOP_DANCE,
@@ -146,12 +149,15 @@ M.NODES = {
 	},
 
 	[SEQUENCES.SHIP_AI] = {
-		type = BehaviourTree.RepeatUntilFail,
-		nodes = {
-			TASKS.IS_ALIVE,
-			SEQUENCES.DANCE_UNTIL_FIND_ENEMY,
-			TASKS.SHOOT_TARGET_METEOR,
-			TASKS.WAIT,
+		type = BehaviourTree.RepeatUntilFailDecorator,
+		node = {
+			type = BehaviourTree.Sequence,
+			nodes = {
+				TASKS.IS_ALIVE,
+				SEQUENCES.DANCE_UNTIL_FIND_ENEMY,
+				TASKS.SHOOT_TARGET_METEOR,
+				TASKS.WAIT,
+			},
 		},
 	},
 }

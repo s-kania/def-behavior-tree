@@ -10,7 +10,9 @@ function Registry.registerTemplates(templates)
   -- return template and it's name
   local getNodeTemplate = function (template_data)
     if type(template_data) == "string" then --registered task or sequence
-      return templates.NODES[template_data], template_data
+      local template = templates.NODES[template_data]
+      local template_name = template.type.name == "Node" and template_data or template_data .. " | " .. template.type.name
+      return template, template_name
     end
     return template_data, template_data.type.name --pure node in registeredNodes
   end
