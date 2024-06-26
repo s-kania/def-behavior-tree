@@ -70,20 +70,19 @@ Composite.name = "Composite"
 --   return tree_state:getCurrentNode(nodeID)
 -- end
 
-function Composite:run(tree_state)
+function Composite.run(tree_state)
     local node = tree_state:getCurrentNode()
 
-    node:start(tree_state)
-    node:run(tree_state)
+    node.start(tree_state)
+    node.run(tree_state)
 end
 
-function Composite:success(tree_state)
-  local parent = tree_state:getCurrentNodeParent(tree_state)
-  parent:finish(tree_state)
+function Composite.success(tree_state)
+    tree_state:getCurrentNode().finish(tree_state)
 end
 
-function Composite:fail(tree_state)
-  tree_state:getCurrentNodeParent(tree_state):finish(tree_state)
+function Composite.fail(tree_state)
+    tree_state:getCurrentNode().finish(tree_state)
 end
 
 return Composite

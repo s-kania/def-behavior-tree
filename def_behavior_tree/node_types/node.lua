@@ -48,9 +48,9 @@ Node.name = "Node"
 --   end
 -- end
 
-function Node:start(tree_state) end
-function Node:run(tree_state) end
-function Node:finish(tree_state) end
+function Node.start(tree_state) end
+function Node.run(tree_state) end
+function Node.finish(tree_state) end
 
 -- function Node:start()
 --   self._startTask(self, self.treeState.payload)
@@ -64,12 +64,12 @@ function Node:finish(tree_state) end
 --   self._finishTask(self, self.treeState.payload)
 -- end
 
-function Node:success(tree_state)
-  tree_state:getCurrentNodeParent():success(tree_state)
+function Node.success(tree_state)
+    tree_state:getCurrentNodeParent().success(tree_state)
 end
 
-function Node:fail(tree_state)
-  tree_state:getCurrentNodeParent():fail(tree_state)
+function Node.fail(tree_state)
+    tree_state:getCurrentNodeParent().fail(tree_state)
 end
 
 return Node

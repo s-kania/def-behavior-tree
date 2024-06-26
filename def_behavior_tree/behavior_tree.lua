@@ -109,11 +109,11 @@ BehaviorTree.Priority                = "dupa"
 BehaviorTree.ActivePriority          = "dupa"
 BehaviorTree.Random                  = "dupa"
 BehaviorTree.Sequence                = require "def_behavior_tree.node_types.sequence"
-BehaviorTree.Decorator               = "dupa"
-BehaviorTree.InvertDecorator         = "dupa"
+BehaviorTree.Decorator               = require "def_behavior_tree.node_types.decorator"
+BehaviorTree.InvertDecorator         = require "def_behavior_tree.node_types.invert_decorator"
 BehaviorTree.AlwaysFailDecorator     = "dupa"
 BehaviorTree.AlwaysSucceedDecorator  = "dupa"
-BehaviorTree.RepeatUntilFailDecorator= "dupa"
+BehaviorTree.RepeatUntilFailDecorator= require "def_behavior_tree.node_types.repeat_until_fail_decorator"
 
 BehaviorTree.registerTemplates = Registry.registerTemplates
 BehaviorTree.getTreeTemplate = Registry.getTreeTemplate
@@ -144,26 +144,33 @@ function BehaviorTree:initialize(config)
     -- nodes = {
     --   _tree = self --rootNode parent_id is _tree, set in registry
     -- },
+    getNode = function(self, nodeID)
+        return Registry.getNodeFromTree(nodeID, self.name)
+      end,
     getCurrentNode = function(self)
-      return self:getNode(self.runningNodeID)
+        return self:getNode(self.runningNodeID)
     end,
     getCurrentNodeParent = function(self)
-      local currentNode = self:getCurrentNode()
-      if currentNode.parent_id == nil then
-        return print('dupsko')
-      end
-      return self:getNode(currentNode.parent_id)
-    end,
-    getNode = function(self, nodeID)
-      return Registry.getNodeFromTree(nodeID, self.name)
+        local currentNode = self:getCurrentNode()
+        if currentNode.parent_id == "_tree" then
+            return {
+                success = function(tree_state)
+                    print('drzewo zrobione sukces')
+                end,
+                fail = function(tree_state)
+                    print('drzewo zrobione fail')
+                end
+            }
+        end
+        return self:getNode(currentNode.parent_id)
     end,
     success = function(self)
-      local node = self:getCurrentNode()
-      node:success(self)
+        local node = self:getCurrentNode()
+        node.success(self)
     end,
     fail = function(self)
-      local node = self:getCurrentNode()
-      node:fail(self)
+        local node = self:getCurrentNode()
+        node.fail(self)
     end,
   }
 end
@@ -176,9 +183,9 @@ function BehaviorTree:run()
     self.running = true
     self.rootNode = self.treeState:getNode(1)
 
-    -- self.treeState:setRunningNodeID(1) -- TODO przeniesc do start/run/finish
-    self.rootNode:start(self.treeState)
-    self.rootNode:run(self.treeState)
+    self.treeState:setRunningNodeID(1) -- TODO przeniesc do start/run/finish
+    self.rootNode.start(self.treeState)
+    self.rootNode.run(self.treeState)
   end
 end
 
@@ -193,12 +200,12 @@ end
 -- end
 
 function BehaviorTree:success()
-  self.rootNode:finish(self.treeState)
+  self.rootNode.finish(self.treeState)
   self.running = false
 end
 
 function BehaviorTree:fail()
-  self.rootNode:finish(self.treeState)
+  self.rootNode.finish(self.treeState)
   self.running = false
 end
 
