@@ -147,12 +147,8 @@ function BehaviorTree:initialize(config)
     getNode = function(self, nodeID)
         return Registry.getNodeFromTree(nodeID, self.name)
       end,
-    getCurrentNode = function(self)
-        return self.runningNode
-    end,
     getCurrentNodeParent = function(self)
-        local currentNode = self:getCurrentNode()
-        if currentNode.parent_id == "_tree" then
+        if self.runningNode.parent_id == "_tree" then
             return {
                 success = function(tree_state)
                     print('drzewo zrobione sukces')
@@ -162,15 +158,13 @@ function BehaviorTree:initialize(config)
                 end
             }
         end
-        return self:getNode(currentNode.parent_id)
+        return self:getNode(self.runningNode.parent_id)
     end,
     success = function(self)
-        local node = self:getCurrentNode()
-        node.success(self)
+        self.runningNode.success(self)
     end,
     fail = function(self)
-        local node = self:getCurrentNode()
-        node.fail(self)
+        self.runningNode.fail(self)
     end,
   }
 end

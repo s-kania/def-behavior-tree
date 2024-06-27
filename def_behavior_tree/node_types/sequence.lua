@@ -44,8 +44,7 @@ function Sequence.getNextNode(tree_state)
 end
 
 function Sequence.start(tree_state)
-    local node = tree_state:getCurrentNode()
-    local nextNode = tree_state:getNode(node.nodes_id_list[1])
+    local nextNode = tree_state:getNode(tree_state.runningNode.nodes_id_list[1])
     tree_state:setRunningNode(nextNode)
 end
 
