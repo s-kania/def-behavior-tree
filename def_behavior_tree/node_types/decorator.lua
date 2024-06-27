@@ -33,7 +33,8 @@ end
 
 function Decorator.start(tree_state)
     local decoratorNode = tree_state:getCurrentNode()
-    tree_state:setRunningNodeID(decoratorNode.node_id)
+    local decoratorChild = tree_state:getNode(decoratorNode.node_id)
+    tree_state:setRunningNode(decoratorChild)
 end
 
 function Decorator.run(tree_state)

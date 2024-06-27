@@ -29,7 +29,7 @@ end
 function RepeatUntilFailDecorator.fail(tree_state)
     Decorator.fail(tree_state)
     local repeatUntilFailDecoratorNode = tree_state:getCurrentNodeParent()
-    tree_state:setRunningNodeID(repeatUntilFailDecoratorNode.id)
+    tree_state:setRunningNode(repeatUntilFailDecoratorNode)
     tree_state:getCurrentNodeParent().success(tree_state)
 end
 

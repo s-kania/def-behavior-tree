@@ -135,9 +135,9 @@ function BehaviorTree:initialize(config)
   self.treeState = {
     name = config.treeName,
     payload = config.payload,
-    runningNodeID = config.runningNodeID or 1,
-    setRunningNodeID = function(self, index)
-      self.runningNodeID = index
+    runningNode = nil,
+    setRunningNode = function(self, node)
+      self.runningNode = node
     end,
     -- TODO callback, jedno drzewo moze miec tylko jednego callbacka aktualnego
     -- ale statek moze plynac a drzewo robic inna akcje, np atakowac, wtedy callback plyniecia sie odpali
@@ -148,7 +148,7 @@ function BehaviorTree:initialize(config)
         return Registry.getNodeFromTree(nodeID, self.name)
       end,
     getCurrentNode = function(self)
-        return self:getNode(self.runningNodeID)
+        return self.runningNode
     end,
     getCurrentNodeParent = function(self)
         local currentNode = self:getCurrentNode()
@@ -183,7 +183,7 @@ function BehaviorTree:run()
     self.running = true
     self.rootNode = self.treeState:getNode(1)
 
-    self.treeState:setRunningNodeID(1) -- TODO przeniesc do start/run/finish
+    self.treeState:setRunningNode(self.rootNode)
     self.rootNode.start(self.treeState)
     self.rootNode.run(self.treeState)
   end
