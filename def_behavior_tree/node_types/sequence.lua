@@ -36,15 +36,21 @@ Sequence.name = "Sequence"
 -- end
 
 function Sequence.getNextNode(tree_state)
-    local sequenceNode = tree_state:getCurrentNodeParent()
-    local currentNodeIndex = table.indexOf(sequenceNode.nodes_id_list, tree_state.runningNode.id)
-    local nextNodeID = sequenceNode.nodes_id_list[currentNodeIndex + 1]
+    local sequenceNode = tree_state.runningNode.parent
+    local currentNodeIndex = nil
 
-    return nextNodeID and tree_state:getNode(nextNodeID)
+    for index, node in ipairs(sequenceNode.nodes) do
+        if node.id == tree_state.runningNode.id then
+            currentNodeIndex = index
+            break
+        end
+    end
+
+    return sequenceNode.nodes[currentNodeIndex + 1]
 end
 
 function Sequence.start(tree_state)
-    local nextNode = tree_state:getNode(tree_state.runningNode.nodes_id_list[1])
+    local nextNode = tree_state.runningNode.nodes[1]
     tree_state:setRunningNode(nextNode)
 end
 
@@ -65,17 +71,17 @@ function Sequence.success(tree_state)
         tree_state:setRunningNode(nextNode)
         Composite.run(tree_state)
     else
-        local sequenceNode = tree_state:getCurrentNodeParent()
+        local sequenceNode = tree_state.runningNode.parent
         tree_state:setRunningNode(sequenceNode)
-        tree_state:getCurrentNodeParent().success(tree_state)
+        tree_state.runningNode.parent.success(tree_state)
     end
 end
 
 function Sequence.fail(tree_state)
     Composite.fail(tree_state)
-    local sequenceNode = tree_state:getCurrentNodeParent()
+    local sequenceNode = tree_state.runningNode.parent
     tree_state:setRunningNode(sequenceNode)
-    tree_state:getCurrentNodeParent().fail(tree_state)
+    tree_state.runningNode.parent.fail(tree_state)
 end
 
 return Sequence

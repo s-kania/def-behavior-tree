@@ -22,15 +22,14 @@ local RepeatUntilFailDecorator = {
 }
 
 function RepeatUntilFailDecorator.success(tree_state)
-    -- Decorator.success(tree_state)
     Decorator.run(tree_state)
 end
 
 function RepeatUntilFailDecorator.fail(tree_state)
     Decorator.fail(tree_state)
-    local repeatUntilFailDecoratorNode = tree_state:getCurrentNodeParent()
+    local repeatUntilFailDecoratorNode = tree_state.runningNode.parent
     tree_state:setRunningNode(repeatUntilFailDecoratorNode)
-    tree_state:getCurrentNodeParent().success(tree_state)
+    tree_state.runningNode.parent.success(tree_state)
 end
 
 return RepeatUntilFailDecorator

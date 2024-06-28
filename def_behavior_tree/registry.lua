@@ -97,17 +97,25 @@ function Registry.registerTemplates(templates)
   -- register trees
   for tree_name, data in pairs(templates.TREES) do
     registeredTrees[tree_name] = {}
-    Registry.addNodeTemplateToTree(registeredTrees[tree_name], data.main_node, getNodeTemplate, "_tree")
+    local fake_bt_end = {
+        success = function(tree_state)
+            print('drzewo zrobione sukces')
+        end,
+        fail = function(tree_state)
+            print('drzewo zrobione fail')
+        end
+    }
+    Registry.addNodeTemplateToTree(registeredTrees[tree_name], data.main_node, getNodeTemplate, fake_bt_end)
   end
 end
 
-function Registry.addNodeTemplateToTree(tree, template_data, getNodeTemplate, parent_id)
+function Registry.addNodeTemplateToTree(tree, template_data, getNodeTemplate, parent)
   local template, template_name = getNodeTemplate(template_data)
 
   local tree_template = {
     id = nil,
     name = template_name,
-    parent_id = parent_id,
+    parent = parent,
     type = template.type,
     start = template.start or template.type.start or function () end,
     run = template.run or template.type.run or function () end,
@@ -122,17 +130,17 @@ function Registry.addNodeTemplateToTree(tree, template_data, getNodeTemplate, pa
   tree_template.id = nodeID
 
   if template.nodes then --sequences
-    tree_template.nodes_id_list = {}
+    tree_template.nodes = {}
 
     for _, template_data in ipairs(template.nodes) do
-      local child_index = Registry.addNodeTemplateToTree(tree, template_data, getNodeTemplate, nodeID)
-      table.insert(tree_template.nodes_id_list, child_index)
+      local child_node = Registry.addNodeTemplateToTree(tree, template_data, getNodeTemplate, tree_template)
+      table.insert(tree_template.nodes, child_node)
     end
   elseif template.node then --decorators
-    tree_template.node_id = Registry.addNodeTemplateToTree(tree, template.node, getNodeTemplate, nodeID)
+    tree_template.node = Registry.addNodeTemplateToTree(tree, template.node, getNodeTemplate, tree_template)
   end
 
-  return nodeID
+  return tree_template
 end
 
 function Registry.getNodeFromTree(id, treeName)

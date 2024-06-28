@@ -41,35 +41,16 @@ local Node = {}
 
 Node.name = "Node"
 
--- function Node:initialize(config)
---   config = config or {}
---   for k, v in pairs(config) do
---     self[k] = v
---   end
--- end
-
 function Node.start(tree_state) end
 function Node.run(tree_state) end
 function Node.finish(tree_state) end
 
--- function Node:start()
---   self._startTask(self, self.treeState.payload)
--- end
-
--- function Node:run()
---   self._runTask(self, self.treeState.payload)
--- end
-
--- function Node:finish()
---   self._finishTask(self, self.treeState.payload)
--- end
-
 function Node.success(tree_state)
-    tree_state:getCurrentNodeParent().success(tree_state)
+    tree_state.runningNode.parent.success(tree_state)
 end
 
 function Node.fail(tree_state)
-    tree_state:getCurrentNodeParent().fail(tree_state)
+    tree_state.runningNode.parent.fail(tree_state)
 end
 
 return Node
