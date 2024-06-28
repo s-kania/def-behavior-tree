@@ -1,137 +1,115 @@
--- paused = false
--- pause_fn = nil
--- node_show_delay = 1
--- local BehaviourTree = require "def_behavior_tree.behavior_tree"
+paused = false
+pause_fn = nil
+node_show_delay = 1
+tree_template = nil
+tree_history = {}
+local BehaviourTree = require "def_behavior_tree.behavior_tree"
 
--- local function success_debug(self, success_fn)
--- 	self.treeState.nodes_history[self.id] = {
--- 		success = true,
--- 		delay = node_show_delay,
--- 	}
--- 	if paused then
--- 		pause_fn = function()
--- 			success_fn(self)
--- 		end
--- 	else
--- 		success_fn(self)
--- 	end
--- end
+local function init_bt_debug()
+    for id, node in pairs(tree_template) do
+        local node_success = node.success
+        local node_fail = node.fail
 
--- local function fail_debug(self, fail_fn)
--- 	self.treeState.nodes_history[self.id] = {
--- 		success = false,
--- 		delay = node_show_delay,
--- 	}
---     if paused then
--- 		pause_fn = function()
--- 			fail_fn(self)
--- 		end
--- 	else
--- 		fail_fn(self)
--- 	end
--- end
+        node.success = function (tree_state)
+            tree_history[id] = {
+                success = node.type.name ~= "InvertDecorator",
+                delay = node_show_delay,
+            }
+            if paused then
+                pause_fn = function()
+                    node_success(tree_state)
+                end
+            else
+                node_success(tree_state)
+            end
+        end
+        node.fail = function (tree_state)
+            tree_history[id] = {
+                success = node.type.name == "InvertDecorator",
+                delay = node_show_delay,
+            }
+            if paused then
+                pause_fn = function()
+                    node_fail(tree_state)
+                end
+            else
+                node_fail(tree_state)
+            end
+        end
+    end
+end
 
--- local function init_bt_debug()
--- 	--composite
--- 	local composite_success = BehaviourTree.Composite.success
--- 	local debug_composite_success = function (self) success_debug(self, composite_success) end
--- 	BehaviourTree.Composite.__declaredMethods.success = debug_composite_success
--- 	BehaviourTree.Composite.__instanceDict.success = debug_composite_success
--- 	local composite_fail = BehaviourTree.Composite.fail
--- 	local debug_composite_fail = function (self) fail_debug(self, composite_fail) end
--- 	BehaviourTree.Composite.__declaredMethods.fail = debug_composite_fail
--- 	BehaviourTree.Composite.__instanceDict.fail = debug_composite_fail
+local function show_node_state(node_index)
+    if tree_history[node_index] then
+        local node_state = tree_history[node_index]
+        imgui.same_line()
+        if node_state.success then
+            imgui.text_colored("Success", 0, 1, 0, node_state.delay )
+        else
+            imgui.text_colored("Fail", 1, 0, 0, node_state.delay )
+        end
+    end
+end
 
--- 	--decorator
--- 	local decorator_success = BehaviourTree.Decorator.success
--- 	local debug_decorator_success = function (self) success_debug(self, decorator_success) end
--- 	BehaviourTree.Decorator.__declaredMethods.success = debug_decorator_success
--- 	BehaviourTree.Decorator.__instanceDict.success = debug_decorator_success
--- 	local decorator_fail = BehaviourTree.Decorator.fail
--- 	local debug_decorator_fail = function (self) fail_debug(self, decorator_fail) end
--- 	BehaviourTree.Decorator.__declaredMethods.fail = debug_decorator_fail
--- 	BehaviourTree.Decorator.__instanceDict.fail = debug_decorator_fail
+local function create_node_button(node_index, tree_template)
+    local node_template = tree_template[node_index]
 
--- 	--node
--- 	local node_success = BehaviourTree.Node.success
--- 	local debug_node_success = function (self) success_debug(self, node_success) end
--- 	BehaviourTree.Node.__declaredMethods.success = debug_node_success
--- 	BehaviourTree.Node.__instanceDict.success = debug_node_success
--- 	local node_fail = BehaviourTree.Node.fail
--- 	local debug_node_fail = function (self) fail_debug(self, node_fail) end
--- 	BehaviourTree.Node.__declaredMethods.fail = debug_node_fail
--- 	BehaviourTree.Node.__instanceDict.fail = debug_node_fail
--- end
-
--- local function show_node_state(node_index)
---     if bt_tree.treeState.nodes_history[node_index] then
---         local node_state = bt_tree.treeState.nodes_history[node_index]
---         imgui.same_line()
---         if node_state.success then
---             imgui.text_colored("Success", 0, 1, 0, node_state.delay )
---         else
---             imgui.text_colored("Fail", 1, 0, 0, node_state.delay )
---         end
---     end
--- end
-
--- local function create_node_button(node_index, tree_template)
---     local node_template = tree_template[node_index]
-
---     if node_template.nodes_id_list then
---         if imgui.tree_node(node_template.name, imgui.TREENODE_DEFAULT_OPEN) then
---                 show_node_state(node_index)
---                 for _, node_index in ipairs(node_template.nodes_id_list) do
---                     create_node_button(node_index, tree_template)
---                 end
---             imgui.tree_pop()
---         end
+    if node_template.nodes then
+        if imgui.tree_node(node_template.name, imgui.TREENODE_DEFAULT_OPEN) then
+                show_node_state(node_index)
+                for _, node in ipairs(node_template.nodes) do
+                    create_node_button(node.id, tree_template)
+                end
+            imgui.tree_pop()
+        end
  
---     elseif node_template.node_id then
---         if imgui.tree_node(node_template.name, imgui.TREENODE_DEFAULT_OPEN) then
---                 show_node_state(node_index)
---                 create_node_button(node_template.node_id, tree_template)
---             imgui.tree_pop()
---         end
+    elseif node_template.node then
+        if imgui.tree_node(node_template.name, imgui.TREENODE_DEFAULT_OPEN) then
+                show_node_state(node_index)
+                create_node_button(node_template.node.id, tree_template)
+            imgui.tree_pop()
+        end
 
---     else
---         imgui.button(node_template.name, 160, 20)
---         show_node_state(node_index)
---     end
--- end
+    else
+        imgui.button(node_template.name, 160, 20)
+        show_node_state(node_index)
+    end
+end
 
--- local function update_bt_tree(self)
---     local tree_template = BehaviourTree.getTreeTemplate("SHIP_BT")
+local function update_bt_tree(self)
+    if not tree_template then
+        return
+    end
 
---     if not tree_template then
---         return
---     end
+    create_node_button(1, tree_template)
+end
 
---     create_node_button(1, tree_template)
--- end
+function update(self, dt)
+    for key, state in pairs(tree_history) do
+        state.delay = state.delay - dt
+    end
 
--- function init(self)
--- 	imgui.set_ini_filename()
---     init_bt_debug()
--- end
+    imgui.begin_window("BehaviorTree - debug window")
+		if paused then
+			if imgui.button("Resume", 100, 20) then
+				paused = false
+				pause_fn()
+				pause_fn = nil
+			end
+		else
+			if imgui.button("Pause", 100, 20) then
+				paused = true
+			end
+		end
+        update_bt_tree(self)
+	imgui.end_window()
+end
 
--- function update(self, dt)
---     for key, state in pairs(bt_tree.treeState.nodes_history) do
---         state.delay = state.delay - dt
---     end
+function on_message(self, message_id, message, sender)
+    if message_id == hash("initialize_debug") then
+        tree_template = BehaviourTree.getTreeTemplate("SHIP_BT")
 
---     imgui.begin_window("BehaviorTree - debug window")
--- 		if paused then
--- 			if imgui.button("Resume", 100, 20) then
--- 				paused = false
--- 				pause_fn()
--- 				pause_fn = nil
--- 			end
--- 		else
--- 			if imgui.button("Pause", 100, 20) then
--- 				paused = true
--- 			end
--- 		end
---         update_bt_tree(self)
--- 	imgui.end_window()
--- end
+        imgui.set_ini_filename()
+        init_bt_debug()
+    end
+end

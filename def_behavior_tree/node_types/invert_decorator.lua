@@ -3,7 +3,6 @@ local InvertDecorator = {
     name = "InvertDecorator",
     start = Decorator.start,
     run = Decorator.run,
-    finish = Decorator.finish,
 }
 
 function InvertDecorator.success(tree_state)

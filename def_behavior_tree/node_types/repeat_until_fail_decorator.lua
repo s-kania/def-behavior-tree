@@ -1,17 +1,3 @@
--- local Decorator  = require "def_behavior_tree.node_types.decorator"
--- local RepeatUntilFailDecorator = class("RepeatUntilFailDecorator", Decorator)
-
--- function RepeatUntilFailDecorator:success()
---     Decorator.run(self)
--- end
-
--- function RepeatUntilFailDecorator:fail()
---     Decorator.success(self)
---     self:getParent():success()
--- end
-
--- return RepeatUntilFailDecorator
-
 local Decorator  = require "def_behavior_tree.node_types.decorator"
 
 local RepeatUntilFailDecorator = {
@@ -22,6 +8,7 @@ local RepeatUntilFailDecorator = {
 }
 
 function RepeatUntilFailDecorator.success(tree_state)
+    Decorator.success(tree_state)
     Decorator.run(tree_state)
 end
 

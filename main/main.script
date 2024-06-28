@@ -12,6 +12,7 @@ function init(self)
 	meteors = {}
 	self.score = 0
 	
+    msg.post("main#debug_window", "initialize_debug")
 	msg.post("player#script", "hide")
 	msg.post("spawner#script", "stop")
 	msg.post("#", "new_game")

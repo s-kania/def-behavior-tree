@@ -23,7 +23,7 @@ function init(self)
 		treeName = "SHIP_BT",
 		payload = self.state
 	})
-	bt_tree.treeState.nodes_history = {}
+	bt_tree.tree_state.nodes_history = {}
 	bt_tree:run()
 
 	msg.post("#", "hide")
