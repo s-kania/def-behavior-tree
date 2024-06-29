@@ -20,15 +20,15 @@ function Registry.registerTemplates(templates)
   -- register trees
   for tree_name, data in pairs(templates.TREES) do
     registeredTrees[tree_name] = {}
-    local fake_bt_end = {
-        success = function(tree_state)
-            print('drzewo zrobione sukces')
+    local bt_end_node_fn = {
+        success = function(tree)
+            tree:treeSuccess()
         end,
-        fail = function(tree_state)
-            print('drzewo zrobione fail')
+        fail = function(tree)
+            tree:treeFail()
         end
     }
-    Registry.addNodeTemplateToTree(registeredTrees[tree_name], data.main_node, getNodeTemplate, fake_bt_end)
+    Registry.addNodeTemplateToTree(registeredTrees[tree_name], data.main_node, getNodeTemplate, bt_end_node_fn)
   end
 end
 

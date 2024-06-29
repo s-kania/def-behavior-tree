@@ -1,7 +1,7 @@
-local class         = require "def_behavior_tree.middleclass"
 local Registry      = require "def_behavior_tree.registry"
 local Node          = require "def_behavior_tree.node_types.node"
-local BehaviorTree = class("BehaviorTree")
+local BehaviorTree = {}
+BehaviorTree.__index = BehaviorTree
  
 BehaviorTree.Node                    = Node
 BehaviorTree.Registry                = Registry
@@ -32,51 +32,16 @@ BehaviorTree.getTreeTemplate = Registry.getTreeTemplate
 
 BehaviorTree.version = "1.0.0"
 
-function table.indexOf(t, object)
-  if type(t) ~= "table" then error("table expected, got " .. type(t), 2) end
-
-  for i, v in pairs(t) do
-      if object == v then
-          return i
-      end
-  end
-end
-
-function BehaviorTree:initialize(config)
-  self.tree_state = {
-    name = config.treeName,
-    payload = config.payload,
-    runningNode = nil,
-    setRunningNode = function(self, node)
-      self.runningNode = node
-    end,
-    -- TODO callback, jedno drzewo moze miec tylko jednego callbacka aktualnego
-    -- ale statek moze plynac a drzewo robic inna akcje, np atakowac, wtedy callback plyniecia sie odpali
-    -- nodes = {
-    --   _tree = self --rootNode parent_id is _tree, set in registry
-    -- },
-    getNode = function(self, nodeID)
-        return Registry.getNodeFromTree(nodeID, self.name)
-    end,
-    success = function(self)
-        self.runningNode.success(self)
-    end,
-    fail = function(self)
-        self.runningNode.fail(self)
-    end,
-  }
-end
-
 function BehaviorTree:run()
   if self.running then
     return
   else
     self.running = true
-    self.rootNode = self.tree_state:getNode(1)
+    self.rootNode = self:getNode(1)
 
-    self.tree_state:setRunningNode(self.rootNode)
-    self.rootNode.start(self.tree_state)
-    self.rootNode.run(self.tree_state)
+    self:setRunningNode(self.rootNode)
+    self.rootNode.start(self)
+    self.rootNode.run(self)
   end
 end
 
@@ -90,18 +55,41 @@ end
 --     self.rootNode:run()
 -- end
 
-function BehaviorTree:success()
-  self.rootNode.finish(self.tree_state)
+function BehaviorTree:treeSuccess()
+  self.rootNode.finish(self)
   self.running = false
+end
+
+function BehaviorTree:treeFail()
+  self.rootNode.finish(self)
+  self.running = false
+end
+
+function BehaviorTree:setRunningNode(node)
+    self.runningNode = node
+end
+
+function BehaviorTree:getNode(nodeID)
+    return Registry.getNodeFromTree(nodeID, self.name)
+end
+
+function BehaviorTree:success()
+    self.runningNode.success(self)
 end
 
 function BehaviorTree:fail()
-  self.rootNode.finish(self.tree_state)
-  self.running = false
+    self.runningNode.fail(self)
 end
 
--- function BehaviorTree:goTo(nodeID)
---   local node = self.tree_state:getNode(nodeID)
--- end
+function BehaviorTree.new(config)
+	local self = setmetatable({
+        name = config.tree_name,
+        payload = config.payload,
+        runningNode = nil,
+        running = false,
+        rootNode = nil,
+    }, BehaviorTree)
+    return self
+end
 
 return BehaviorTree
