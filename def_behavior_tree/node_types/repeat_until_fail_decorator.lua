@@ -14,9 +14,8 @@ end
 
 function RepeatUntilFailDecorator.fail(tree_state)
     Decorator.fail(tree_state)
-    local repeatUntilFailDecoratorNode = tree_state.runningNode.parent
-    tree_state:setRunningNode(repeatUntilFailDecoratorNode)
-    tree_state.runningNode.parent.success(tree_state)
+    tree_state:setActiveNode(tree_state.activeNode.parent)
+    tree_state.activeNode.parent.success(tree_state)
 end
 
 return RepeatUntilFailDecorator

@@ -1,11 +1,9 @@
 local Registry      = require "def_behavior_tree.registry"
-local Node          = require "def_behavior_tree.node_types.node"
 local BehaviorTree = {}
 BehaviorTree.__index = BehaviorTree
  
-BehaviorTree.Node                    = Node
 BehaviorTree.Registry                = Registry
-BehaviorTree.Task                    = Node
+BehaviorTree.Task                    = require "def_behavior_tree.node_types.node"
 BehaviorTree.Composite               = require "def_behavior_tree.node_types.composite"
 BehaviorTree.Priority                = "dupa"
 BehaviorTree.ActivePriority          = "dupa"
@@ -39,7 +37,7 @@ function BehaviorTree:run()
     self.running = true
     self.rootNode = self:getNode(1)
 
-    self:setRunningNode(self.rootNode)
+    self:setActiveNode(self.rootNode)
     self.rootNode.start(self)
     self.rootNode.run(self)
   end
@@ -65,8 +63,8 @@ function BehaviorTree:treeFail()
   self.running = false
 end
 
-function BehaviorTree:setRunningNode(node)
-    self.runningNode = node
+function BehaviorTree:setActiveNode(node)
+    self.activeNode = node
 end
 
 function BehaviorTree:getNode(nodeID)
@@ -74,18 +72,18 @@ function BehaviorTree:getNode(nodeID)
 end
 
 function BehaviorTree:success()
-    self.runningNode.success(self)
+    self.activeNode.success(self)
 end
 
 function BehaviorTree:fail()
-    self.runningNode.fail(self)
+    self.activeNode.fail(self)
 end
 
 function BehaviorTree.new(config)
 	local self = setmetatable({
         name = config.tree_name,
         payload = config.payload,
-        runningNode = nil,
+        activeNode = nil,
         running = false,
         rootNode = nil,
     }, BehaviorTree)
