@@ -1,42 +1,24 @@
-local Composite  = require "def_behavior_tree.node_types.composite"
-local Random = class("Random", Composite)
+local Composite = require "def_behavior_tree.node_types.composite"
+local Random = {
+    name = "Random",
+    run = Composite.run,
+}
 
-function Random:start()
-  Composite.start(self)
-
-  if self.chances then
-    if not self.cumulativeChances then
-      local cumulativeChances = {}
-      
-      for i = 1, #self.chances do
-        cumulativeChances[i] = self.chances[i] + (cumulativeChances[i - 1] or 0)
-      end
-
-      self.cumulativeChances = cumulativeChances
-    end
-
-    self.cumulativeChances = self.cumulativeChances
-  end
-
-  -- TODO rnd nie ma w tej paczce
-  local random_number = rnd.range(1, self.cumulativeChances[#self.cumulativeChances])
-
-  for index = 1, #self.nodes_id_list do
-    if self.cumulativeChances[index] >= random_number then
-      self.actualTaskIndex = index
-      break -- TODO moze tutaj jest blad z BT i tym break
-    end
-  end
+function Random.start(tree_state)
+    local random_index = tree_state:getRandomBetween(1, #tree_state.activeNode.nodes)
+    tree_state:setActiveNode(tree_state.activeNode.nodes[random_index])
 end
 
-function Random:success()
-  Composite.success(self)
-  self:getParent():success()
+function Random.success(tree_state)
+    Composite.success(tree_state)
+    tree_state:setActiveNode(tree_state.activeNode.parent)
+    tree_state.activeNode.parent.success(tree_state)
 end
 
-function Random:fail()
-  Composite.fail(self)
-  self:getParent():fail()
+function Random.fail(tree_state)
+    Composite.fail(tree_state)
+    tree_state:setActiveNode(tree_state.activeNode.parent)
+    tree_state.activeNode.parent.fail(tree_state)
 end
 
 return Random

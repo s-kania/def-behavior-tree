@@ -2,28 +2,18 @@ local Registry      = require "def_behavior_tree.registry"
 local BehaviorTree = {}
 BehaviorTree.__index = BehaviorTree
  
-BehaviorTree.Registry                = Registry
-BehaviorTree.Task                    = require "def_behavior_tree.node_types.node"
-BehaviorTree.Composite               = require "def_behavior_tree.node_types.composite"
-BehaviorTree.Priority                = "dupa"
-BehaviorTree.ActivePriority          = "dupa"
-BehaviorTree.Random                  = "dupa"
-BehaviorTree.Sequence                = require "def_behavior_tree.node_types.sequence"
-BehaviorTree.Decorator               = require "def_behavior_tree.node_types.decorator"
-BehaviorTree.InvertDecorator         = require "def_behavior_tree.node_types.invert_decorator"
-BehaviorTree.AlwaysFailDecorator     = "dupa"
-BehaviorTree.AlwaysSucceedDecorator  = "dupa"
-BehaviorTree.RepeatUntilFailDecorator= require "def_behavior_tree.node_types.repeat_until_fail_decorator"
--- BehaviorTree.Composite               = require "def_behavior_tree.node_types.composite"
--- BehaviorTree.Priority                = require "def_behavior_tree.node_types.priority"
--- BehaviorTree.ActivePriority          = require "def_behavior_tree.node_types.active_priority"
--- BehaviorTree.Random                  = require "def_behavior_tree.node_types.random"
--- BehaviorTree.Sequence                = require "def_behavior_tree.node_types.sequence"
--- BehaviorTree.Decorator               = require "def_behavior_tree.node_types.decorator"
--- BehaviorTree.InvertDecorator         = require "def_behavior_tree.node_types.invert_decorator"
--- BehaviorTree.AlwaysFailDecorator     = require "def_behavior_tree.node_types.always_fail_decorator"
--- BehaviorTree.AlwaysSucceedDecorator  = require "def_behavior_tree.node_types.always_succeed_decorator"
--- BehaviorTree.RepeatUntilFailDecorator= require "def_behavior_tree.node_types.repeat_until_fail_decorator"
+BehaviorTree.Registry                   = Registry
+BehaviorTree.Task                       = require "def_behavior_tree.node_types.node"
+BehaviorTree.Composite                  = require "def_behavior_tree.node_types.composite"
+BehaviorTree.Sequence                   = require "def_behavior_tree.node_types.sequence"
+-- BehaviorTree.Selector                   = require "def_behavior_tree.node_types.selector"
+BehaviorTree.Random                     = require "def_behavior_tree.node_types.random"
+BehaviorTree.RandomWithChances          = require "def_behavior_tree.node_types.random_with_chances"
+BehaviorTree.Decorator                  = require "def_behavior_tree.node_types.decorator"
+BehaviorTree.InvertDecorator            = require "def_behavior_tree.node_types.invert_decorator"
+BehaviorTree.AlwaysFailDecorator        = require "def_behavior_tree.node_types.always_fail_decorator"
+BehaviorTree.AlwaysSucceedDecorator     = require "def_behavior_tree.node_types.always_succeed_decorator"
+BehaviorTree.RepeatUntilFailDecorator   = require "def_behavior_tree.node_types.repeat_until_fail_decorator"
 
 BehaviorTree.registerTemplates = Registry.registerTemplates
 BehaviorTree.getTreeTemplate = Registry.getTreeTemplate
@@ -79,10 +69,18 @@ function BehaviorTree:fail()
     self.activeNode.fail(self)
 end
 
+function BehaviorTree:getRandomBetween(x, y)
+    if self.rng then
+        return self.rng(x, y)
+    end
+    return math.random(x, y)
+end
+
 function BehaviorTree.new(config)
 	local self = setmetatable({
         name = config.tree_name,
         payload = config.payload,
+        rng = config.rng,
         activeNode = nil,
         running = false,
         rootNode = nil,
