@@ -2,6 +2,16 @@ local Composite = {}
 
 Composite.name = "Composite"
 
+function Composite.getNextNode(tree_state)
+    local compositeNode = tree_state.activeNode.parent
+
+    for index, node in ipairs(compositeNode.nodes) do
+        if node.id == tree_state.activeNode.id then
+            return compositeNode.nodes[index + 1]
+        end
+    end
+end
+
 function Composite.start(tree_state)
     tree_state:setActiveNode(tree_state.activeNode.nodes[1])
 end
