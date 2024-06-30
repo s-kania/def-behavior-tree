@@ -28,46 +28,47 @@ M.NODES = {
 	]]--
 	[TASKS.IS_ALIVE] = {
 		type = BehaviourTree.Task,
-		run = function(task, payload)
+		run = function(tree_state)
 			if lives > 0 then
-				task:success()
+				tree_state:success()
 			else
-				task:fail()
+				tree_state:fail()
 			end
 		end
 	},
 
 	[TASKS.WAIT] = {
 		type = BehaviourTree.Task,
-		run = function(task, payload)
+		run = function(tree_state)
 			timer.delay(0.1, false, function ()
-				task:success()
+				tree_state:success()
 			end)
 		end
 	},
 	
 	[TASKS.SELECT_CLOSEST_METEOR] = {
 		type = BehaviourTree.Task,
-		run = function(task, payload)
+		run = function(tree_state)
 			local ship_position = vmath.vector3(320, 568, 0)
 
 			local closest_meteor_id = nil
+            local scan_distance = 400
 
 			for meteor_id, exist in pairs(meteors) do
 				if exist then
 					local meteor_distance_from_ship = vmath.length(ship_position - go.get_position(meteor_id))
 					local closest_meteor_distance_from_ship = vmath.length(ship_position - go.get_position(closest_meteor_id))
-					if meteor_distance_from_ship < 400 and (closest_meteor_id == nil or meteor_distance_from_ship < closest_meteor_distance_from_ship) then
+					if meteor_distance_from_ship < scan_distance and (closest_meteor_id == nil or meteor_distance_from_ship < closest_meteor_distance_from_ship) then
 						closest_meteor_id = meteor_id
 					end
 				end
 			end
 
 			if closest_meteor_id and go.exists(closest_meteor_id) then
-				payload.target_meteor = closest_meteor_id
-				task:success()
+				tree_state.payload.target_meteor = closest_meteor_id
+				tree_state:success()
 			else
-				task:fail()
+				tree_state:fail()
 			end
 
 		end
@@ -75,26 +76,27 @@ M.NODES = {
 
 	[TASKS.SHOOT_TARGET_METEOR] = {
 		type = BehaviourTree.Task,
-		run = function(task, payload)
-			if payload.target_meteor == nil or not go.exists(payload.target_meteor) then
-				return task:fail()
+		run = function(tree_state)
+			if tree_state.payload.target_meteor == nil or not go.exists(tree_state.payload.target_meteor) then
+				return tree_state:fail()
 			end
 
 			local ship_position = vmath.vector3(320, 568, 0)
-			local meteor_position = go.get_position(payload.target_meteor)
+			local meteor_position = go.get_position(tree_state.payload.target_meteor)
 
 			local pos = ship_position - meteor_position
 			local rot_between_ship_and_meteor = vmath.quat_rotation_z(math.atan2(pos.y, pos.x) + math.pi / 2)
-			payload.direction = rot_between_ship_and_meteor
+			tree_state.payload.direction = rot_between_ship_and_meteor
 
+            local task = {}
 			local function shoot(self, handle, time_elapsed)
 				task.counter = task.counter + 1
-				local offset = vmath.rotate(payload.direction, vmath.vector3(0, 50, 0))
-				factory.create("player#laserfactory", go.get_position(payload.id) + offset, go.get_rotation(payload.id))
+				local offset = vmath.rotate(tree_state.payload.direction, vmath.vector3(0, 50, 0))
+				factory.create("player#laserfactory", go.get_position(tree_state.payload.id) + offset, go.get_rotation(tree_state.payload.id))
 				if task.counter == 3 then
-					payload.target_meteor = nil
+					tree_state.payload.target_meteor = nil
 				  	timer.cancel(handle)
-					task:success()
+					tree_state:success()
 				end
 			  end
 			  
@@ -105,21 +107,21 @@ M.NODES = {
 
 	[TASKS.DANCE] = {
 		type = BehaviourTree.Task,
-		run = function(task, payload)
-			payload.thrust = true
-			payload.rot = payload.rot_left
+		run = function(tree_state)
+			tree_state.payload.thrust = true
+			tree_state.payload.rot = tree_state.payload.rot_left
 			-- if action.pressed then
 			-- payload.speed = 0
 			-- end
-			task:success()
+			tree_state:success()
 		end
 	},
 
 	[TASKS.STOP_DANCE] = {
 		type = BehaviourTree.Task,
-		run = function(task, payload)
-			payload.speed = 0
-			task:success()
+		run = function(tree_state)
+			tree_state.payload.speed = 0
+			tree_state:success()
 		end
 	},
 

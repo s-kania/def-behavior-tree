@@ -19,11 +19,11 @@ function init(self)
 	}
 	
 
-	bt_tree = BehaviourTree:new({
-		treeName = "SHIP_BT",
-		payload = self.state
+	bt_tree = BehaviourTree.new({
+		tree_name = "SHIP_BT",
+		payload = self.state,
 	})
-	bt_tree.treeState.nodes_history = {}
+	bt_tree.nodes_history = {}
 	bt_tree:run()
 
 	msg.post("#", "hide")

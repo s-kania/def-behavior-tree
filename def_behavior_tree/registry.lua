@@ -20,54 +20,67 @@ function Registry.registerTemplates(templates)
   -- register trees
   for tree_name, data in pairs(templates.TREES) do
     registeredTrees[tree_name] = {}
-    Registry.addNodeTemplateToTree(registeredTrees[tree_name], data.main_node, getNodeTemplate, nil)
+    local bt_end_node_fn = {
+        success = function(tree)
+            tree:treeSuccess()
+        end,
+        fail = function(tree)
+            tree:treeFail()
+        end
+    }
+    Registry.addNodeTemplateToTree(registeredTrees[tree_name], data.main_node, getNodeTemplate, bt_end_node_fn)
   end
 end
 
-function Registry.addNodeTemplateToTree(tree, template_data, getNodeTemplate, parent_id)
+function Registry.addNodeTemplateToTree(tree, template_data, getNodeTemplate, parent)
   local template, template_name = getNodeTemplate(template_data)
 
   local tree_template = {
+    id = nil,
     name = template_name,
+    parent = parent,
     type = template.type,
-    parent_id = parent_id,
-    start = template.start,
-    finish = template.finish,
-    run = template.run,
+    start = template.start or template.type.start or function () end,
+    run = template.run or template.type.run or function () end,
+    finish = template.finish or template.type.finish or function () end,
+    success = template.type.success,
+    fail = template.type.fail,
   }
 
   --insert tree_template to get parent id for childs
   table.insert(tree, tree_template)
-  local node_index = #tree
+  local nodeID = #tree
+  tree_template.id = nodeID
 
   if template.nodes then --sequences
-    tree_template.nodes_id_list = {}
+    tree_template.nodes = {}
 
     for _, template_data in ipairs(template.nodes) do
-      local child_index = Registry.addNodeTemplateToTree(tree, template_data, getNodeTemplate, node_index)
-      table.insert(tree_template.nodes_id_list, child_index)
+      local child_node = Registry.addNodeTemplateToTree(tree, template_data, getNodeTemplate, tree_template)
+      table.insert(tree_template.nodes, child_node)
     end
   elseif template.node then --decorators
-    tree_template.node_id = Registry.addNodeTemplateToTree(tree, template.node, getNodeTemplate, node_index)
+    tree_template.node = Registry.addNodeTemplateToTree(tree, template.node, getNodeTemplate, tree_template)
   end
 
-  return node_index
+  return tree_template
 end
 
-function Registry.getNodeFromTree(id, treeState)
-  local treeTemplate = registeredTrees[treeState.name][id]
-
-  return treeTemplate.type:new({
-    id = id,
-    parent_id = treeTemplate.parent_id or "_tree",
-    _startTask = treeTemplate.start,
-    _runTask = treeTemplate.run,
-    _finishTask = treeTemplate.finish,
-    nodes_id_list = treeTemplate.nodes_id_list,
-    node_id = treeTemplate.node_id,
-    chances = treeTemplate.chances, -- for random node
-    treeState = treeState,
-  })
+function Registry.getNodeFromTree(id, treeName)
+  local treeTemplate = registeredTrees[treeName][id]
+  
+  return treeTemplate
+  -- return treeTemplate.type:new({
+  --   -- id = id,
+  --   parent_id = treeTemplate.parent_id,
+  --   _startTask = treeTemplate.start,
+  --   _runTask = treeTemplate.run,
+  --   _finishTask = treeTemplate.finish,
+  --   nodes_id_list = treeTemplate.nodes_id_list,
+  --   node_id = treeTemplate.node_id,
+  --   chances = treeTemplate.chances, -- for random node
+  --   tree_state = tree_state,
+  -- })
 end
 
 function Registry.getTreeTemplate(treeName)
@@ -75,3 +88,4 @@ function Registry.getTreeTemplate(treeName)
 end
 
 return Registry
+

@@ -1,21 +1,22 @@
-local Registry = require "def_behavior_tree.registry"
-local Node  = require "def_behavior_tree.node_types.node"
-local Decorator = class("Decorator", Node)
+local Decorator = {
+    name = "Decorator"
+}
 
-function Decorator:success() end
-function Decorator:fail() end
-
-function Decorator:start()
-  self.node = self.treeState:getNode(self.node_id)
+function Decorator.start(tree_state)
+    tree_state:setActiveNode(tree_state.activeNode.node)
 end
 
-function Decorator:run()
-  self.node:start()
-  self.node:run()
+function Decorator.run(tree_state)
+    tree_state.activeNode.start(tree_state)
+    tree_state.activeNode.run(tree_state)
 end
 
-function Decorator:finish()
-  self.node:finish()
+function Decorator.success(tree_state)
+    tree_state.activeNode.finish(tree_state)
+end
+
+function Decorator.fail(tree_state)
+    tree_state.activeNode.finish(tree_state)
 end
 
 return Decorator
