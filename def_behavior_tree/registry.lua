@@ -67,20 +67,7 @@ function Registry.addNodeTemplateToTree(tree, template_data, getNodeTemplate, pa
 end
 
 function Registry.getNodeFromTree(id, treeName)
-  local treeTemplate = registeredTrees[treeName][id]
-  
-  return treeTemplate
-  -- return treeTemplate.type:new({
-  --   -- id = id,
-  --   parent_id = treeTemplate.parent_id,
-  --   _startTask = treeTemplate.start,
-  --   _runTask = treeTemplate.run,
-  --   _finishTask = treeTemplate.finish,
-  --   nodes_id_list = treeTemplate.nodes_id_list,
-  --   node_id = treeTemplate.node_id,
-  --   chances = treeTemplate.chances, -- for random node
-  --   tree_state = tree_state,
-  -- })
+  return registeredTrees[treeName][id]
 end
 
 function Registry.getTreeTemplate(treeName)
