@@ -55,7 +55,7 @@ local function create_node_button(node_index, tree_template)
     local node_template = tree_template[node_index]
 
     if node_template.nodes then
-        if imgui.tree_node(node_template.name, imgui.TREENODE_DEFAULT_OPEN) then
+        if imgui.tree_node(node_template.id .. ": " ..  node_template.name, imgui.TREENODE_DEFAULT_OPEN) then
                 show_node_state(node_index)
                 for _, node in ipairs(node_template.nodes) do
                     create_node_button(node.id, tree_template)
@@ -64,14 +64,19 @@ local function create_node_button(node_index, tree_template)
         end
  
     elseif node_template.node then
-        if imgui.tree_node(node_template.name, imgui.TREENODE_DEFAULT_OPEN) then
+        if imgui.tree_node(node_template.id .. ": " ..  node_template.name, imgui.TREENODE_DEFAULT_OPEN) then
                 show_node_state(node_index)
                 create_node_button(node_template.node.id, tree_template)
             imgui.tree_pop()
         end
 
     else
-        imgui.button(node_template.name, 160, 20)
+        if imgui.button(node_template.id .. ": " ..  node_template.name, 180, 20) then
+            local node = bt_tree:getNode(node_template.id)
+            bt_tree:setActiveNode(node)
+            bt_tree.activeNode.start(bt_tree)
+            bt_tree.activeNode.run(bt_tree)
+        end
         show_node_state(node_index)
     end
 end
@@ -95,6 +100,20 @@ function update(self, dt)
 				paused = false
 				pause_fn()
 				pause_fn = nil
+			end
+
+            local changed, int = imgui.input_int("Node ID", self.int or 1)
+            if changed then
+                self.int = int
+            end
+
+            if imgui.button("Go to node", 100, 20) then
+                local node = bt_tree:getNode(self.int)
+                if node then
+				    bt_tree:setActiveNode(node)
+                    bt_tree.activeNode.start(bt_tree)
+                    bt_tree.activeNode.run(bt_tree)
+                end
 			end
 		else
 			if imgui.button("Pause", 100, 20) then
