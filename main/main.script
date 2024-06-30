@@ -1,5 +1,3 @@
-class = require "def_behavior_tree.middleclass"
-
 local BehaviourTree = require "def_behavior_tree.behavior_tree"
 local bt_templates = require "main.bt_templates"
 
