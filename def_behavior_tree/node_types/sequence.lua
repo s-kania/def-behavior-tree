@@ -5,19 +5,9 @@ local Sequence = {
     run = Composite.run,
 }
 
-function Sequence.getNextNode(tree_state)
-    local sequenceNode = tree_state.activeNode.parent
-
-    for index, node in ipairs(sequenceNode.nodes) do
-        if node.id == tree_state.activeNode.id then
-            return sequenceNode.nodes[index + 1]
-        end
-    end
-end
-
 function Sequence.success(tree_state)
     Composite.success(tree_state)
-    local nextNode = Sequence.getNextNode(tree_state)
+    local nextNode = Composite.getNextNode(tree_state)
 
     if nextNode then
         tree_state:setActiveNode(nextNode)

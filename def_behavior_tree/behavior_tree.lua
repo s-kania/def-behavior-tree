@@ -6,7 +6,7 @@ BehaviorTree.Registry                   = Registry
 BehaviorTree.Task                       = require "def_behavior_tree.node_types.node"
 BehaviorTree.Composite                  = require "def_behavior_tree.node_types.composite"
 BehaviorTree.Sequence                   = require "def_behavior_tree.node_types.sequence"
--- BehaviorTree.Selector                   = require "def_behavior_tree.node_types.selector"
+BehaviorTree.Selector                   = require "def_behavior_tree.node_types.selector"
 BehaviorTree.Random                     = require "def_behavior_tree.node_types.random"
 BehaviorTree.RandomWithChances          = require "def_behavior_tree.node_types.random_with_chances"
 BehaviorTree.Decorator                  = require "def_behavior_tree.node_types.decorator"
@@ -17,8 +17,6 @@ BehaviorTree.RepeatUntilFailDecorator   = require "def_behavior_tree.node_types.
 
 BehaviorTree.registerTemplates = Registry.registerTemplates
 BehaviorTree.getTreeTemplate = Registry.getTreeTemplate
-
-BehaviorTree.version = "1.0.0"
 
 function BehaviorTree:run()
   if self.running then
@@ -43,16 +41,6 @@ end
 --     self.rootNode:run()
 -- end
 
-function BehaviorTree:treeSuccess()
-  self.rootNode.finish(self)
-  self.running = false
-end
-
-function BehaviorTree:treeFail()
-  self.rootNode.finish(self)
-  self.running = false
-end
-
 function BehaviorTree:setActiveNode(node)
     self.activeNode = node
 end
@@ -62,11 +50,13 @@ function BehaviorTree:getNode(nodeID)
 end
 
 function BehaviorTree:success()
-    self.activeNode.success(self)
+    self.rootNode.finish(self)
+    self.running = false
 end
 
 function BehaviorTree:fail()
-    self.activeNode.fail(self)
+    self.rootNode.finish(self)
+    self.running = false
 end
 
 function BehaviorTree:getRandomBetween(x, y)

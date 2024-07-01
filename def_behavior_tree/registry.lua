@@ -22,10 +22,10 @@ function Registry.registerTemplates(templates)
     registeredTrees[tree_name] = {}
     local bt_end_node_fn = {
         success = function(tree)
-            tree:treeSuccess()
+            tree:success()
         end,
         fail = function(tree)
-            tree:treeFail()
+            tree:fail()
         end
     }
     Registry.addNodeTemplateToTree(registeredTrees[tree_name], data.main_node, getNodeTemplate, bt_end_node_fn)
@@ -40,9 +40,12 @@ function Registry.addNodeTemplateToTree(tree, template_data, getNodeTemplate, pa
     name = template_name,
     parent = parent,
     type = template.type,
-    start = template.start or template.type.start or function () end,
-    run = template.run or template.type.run or function () end,
-    finish = template.finish or template.type.finish or function () end,
+    start = template.type.start or function () end,
+    run = template.type.run or function () end,
+    finish = template.type.finish or function () end,
+    _start = template.start or function () end,
+    _run = template.run or function () end,
+    _finish = template.finish or function () end,
     success = template.type.success,
     fail = template.type.fail,
   }
