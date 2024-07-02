@@ -31,15 +31,13 @@ function BehaviorTree:run()
   end
 end
 
--- TODO refactor?
--- function BehaviorTree:restart()
---     self:fail()
---     -- self.tree_state:setRunningNodeID(1)
---     self.running = true
+function BehaviorTree:restart()
+    self.running = true
 
---     self.rootNode:start()
---     self.rootNode:run()
--- end
+    self:setActiveNode(self.rootNode)
+    self.rootNode.start(self)
+    self.rootNode.run(self)
+end
 
 function BehaviorTree:setActiveNode(node)
     self.activeNode = node
