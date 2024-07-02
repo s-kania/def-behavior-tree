@@ -48,6 +48,7 @@ function Registry.addNodeTemplateToTree(tree, template_data, getNodeTemplate, pa
     _finish = template.finish or function () end,
     success = template.type.success,
     fail = template.type.fail,
+    chance = template.chance,
   }
 
   --insert tree_template to get parent id for childs

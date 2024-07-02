@@ -9,16 +9,19 @@ local TASKS = {
 	SHOOT_TARGET_METEOR = "SHOOT_TARGET_METEOR",
 	DANCE = "DANCE",
 	STOP_DANCE = "STOP_DANCE",
+    SET_ONE_SHOOT = "SET_ONE_SHOOT",
+    SET_THREE_SHOOTS = "SET_THREE_SHOOTS",
 }
 
-local SEQUENCES = {
+local COMPOSITES = {
 	DANCE_UNTIL_FIND_ENEMY = "DANCE_UNTIL_FIND_ENEMY",
 	SHIP_AI = "SHIP_AI",
+    GET_RANDOM_SHOOTS_NUMBER = "GET_RANDOM_SHOOTS_NUMBER",
 }
 
 M.TREES = {
 	SHIP_BT = {
-		main_node = SEQUENCES.SHIP_AI
+		main_node = COMPOSITES.SHIP_AI
 	},
 }
 
@@ -93,7 +96,7 @@ M.NODES = {
 				timer_task.counter = timer_task.counter + 1
 				local offset = vmath.rotate(payload.direction, vmath.vector3(0, 50, 0))
 				factory.create("player#laserfactory", go.get_position(payload.id) + offset, go.get_rotation(payload.id))
-				if timer_task.counter == 3 then
+				if timer_task.counter == payload.shoots then
 					payload.target_meteor = nil
 				  	timer.cancel(handle)
 					task:success()
@@ -125,11 +128,27 @@ M.NODES = {
 		end
 	},
 
+    [TASKS.SET_ONE_SHOOT] = {
+        type = BehaviourTree.Task,
+        run = function (task, payload)
+            payload.shoots = 1
+            task:success()
+        end
+    },
+
+    [TASKS.SET_THREE_SHOOTS] = {
+        type = BehaviourTree.Task,
+        run = function (task, payload)
+            payload.shoots = 3
+            task:success()
+        end
+    },
+
 	--[[
-	**** SEQUENCES **** 
+	**** COMPOSITES **** 
 	]]--
 
-	[SEQUENCES.DANCE_UNTIL_FIND_ENEMY] = {
+	[COMPOSITES.DANCE_UNTIL_FIND_ENEMY] = {
 		type = BehaviourTree.Sequence,
 		nodes = {
 			{
@@ -150,13 +169,30 @@ M.NODES = {
 		}
 	},
 
-	[SEQUENCES.SHIP_AI] = {
+    [COMPOSITES.GET_RANDOM_SHOOTS_NUMBER] = {
+        type = BehaviourTree.RandomWithChances,
+        nodes = {
+            {
+                type = BehaviourTree.ChanceDecorator,
+                chance = 30,
+                node = TASKS.SET_THREE_SHOOTS,
+            },
+            {
+                type = BehaviourTree.ChanceDecorator,
+                chance = 70,
+                node = TASKS.SET_ONE_SHOOT,
+            },
+        }
+    },
+
+	[COMPOSITES.SHIP_AI] = {
 		type = BehaviourTree.RepeatUntilFailDecorator,
 		node = {
 			type = BehaviourTree.Sequence,
 			nodes = {
 				TASKS.IS_ALIVE,
-				SEQUENCES.DANCE_UNTIL_FIND_ENEMY,
+				COMPOSITES.DANCE_UNTIL_FIND_ENEMY,
+                COMPOSITES.GET_RANDOM_SHOOTS_NUMBER,
 				TASKS.SHOOT_TARGET_METEOR,
 				TASKS.WAIT,
 			},
