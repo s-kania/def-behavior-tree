@@ -5,7 +5,7 @@ tree_template = nil
 tree_history = {}
 local BehaviourTree = require "def_behavior_tree.behavior_tree"
 
-local function get_decorator_status(node_name, status)
+local function get_status(node_name, status)
     if node_name == "AlwaysFailDecorator" then
         return false
     elseif node_name == "AlwaysSucceedDecorator" then
@@ -24,7 +24,7 @@ local function init_bt_debug()
 
         node.success = function (tree_state)
             tree_history[id] = {
-                success = get_decorator_status(node.type.name, true),
+                success = true,
                 delay = node_show_delay,
             }
             if paused then
@@ -36,8 +36,11 @@ local function init_bt_debug()
             end
         end
         node.fail = function (tree_state)
+            if id == 24 then
+                print('co tam')
+            end
             tree_history[id] = {
-                success = get_decorator_status(node.type.name, false),
+                success = false,
                 delay = node_show_delay,
             }
             if paused then
@@ -55,6 +58,9 @@ local function show_node_state(node_index)
     if tree_history[node_index] then
         local node_state = tree_history[node_index]
         imgui.same_line()
+        if node_index == 24 then
+            print('co jesrt', node_state.success)
+        end
         if node_state.success then
             imgui.text_colored("Success", 0, 1, 0, node_state.delay )
         else

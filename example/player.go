@@ -1,6 +1,6 @@
 components {
   id: "script"
-  component: "/main/player.script"
+  component: "/example/player.script"
   position {
     x: 0.0
     y: 0.0
@@ -81,7 +81,7 @@ embedded_components {
 embedded_components {
   id: "laserfactory"
   type: "factory"
-  data: "prototype: \"/main/laser.go\"\n"
+  data: "prototype: \"/example/laser.go\"\n"
   "load_dynamically: false\n"
   "dynamic_prototype: false\n"
   ""
@@ -169,7 +169,7 @@ embedded_components {
 embedded_components {
   id: "explosionfactory"
   type: "factory"
-  data: "prototype: \"/main/explosion.go\"\n"
+  data: "prototype: \"/example/explosion.go\"\n"
   "load_dynamically: false\n"
   "dynamic_prototype: false\n"
   ""

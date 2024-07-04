@@ -63,7 +63,7 @@ function on_message(self, message_id, message, sender)
 		msg.post(".", "disable")
 	elseif message_id == hash("collision_response") then
 		-- player dies
-		msg.post("main#script", "player_dies")
+		msg.post("example#script", "player_dies")
 		factory.create("#explosionfactory")
 		msg.post("#", "release_input_focus")
 		msg.post(".", "disable")

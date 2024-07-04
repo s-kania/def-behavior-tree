@@ -28,7 +28,7 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == hash("collision_response") and self.life > 0 then
 		sound.play("#explode")
-		msg.post("main#script", "meteor_destroyed")
+		msg.post("example#script", "meteor_destroyed")
 		msg.post("spawner#script", "meteor_destroyed")
 		go.delete()
 		self.life = 0 -- to prevent more than one collision response

@@ -1,4 +1,4 @@
-script: "/main/hud.gui_script"
+script: "/example/hud.gui_script"
 fonts {
   name: "text"
   font: "/assets/font/text.font"

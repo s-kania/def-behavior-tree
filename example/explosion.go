@@ -1,6 +1,6 @@
 components {
   id: "explosion"
-  component: "/main/explosion.script"
+  component: "/example/explosion.script"
   position {
     x: 0.0
     y: 0.0

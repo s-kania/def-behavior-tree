@@ -1,6 +1,6 @@
 components {
   id: "script"
-  component: "/main/laser.script"
+  component: "/example/laser.script"
   position {
     x: 0.0
     y: 0.0

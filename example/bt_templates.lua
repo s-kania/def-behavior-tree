@@ -106,12 +106,13 @@ M.NODES = {
                     payload.shoots = nil
                     payload.nearest_meteors = nil
 				  	timer.cancel(handle)
-					task:success()
+					return task:success()
 				end
 			  end
 			  
 			timer_task.counter = 0
-			timer.delay(0.5 / (2^(payload.shoots/3)), true, shoot)
+			-- timer.delay(0.5 / (2^(payload.shoots/3)), true, shoot)
+			timer.delay(0.12, true, shoot)
 		end
 	},
 

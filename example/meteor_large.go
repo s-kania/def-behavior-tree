@@ -1,6 +1,6 @@
 components {
   id: "script"
-  component: "/main/meteor.script"
+  component: "/example/meteor.script"
   position {
     x: 0.0
     y: 0.0
@@ -164,7 +164,7 @@ embedded_components {
 embedded_components {
   id: "factory"
   type: "factory"
-  data: "prototype: \"/main/meteor_small.go\"\n"
+  data: "prototype: \"/example/meteor_small.go\"\n"
   "load_dynamically: false\n"
   "dynamic_prototype: false\n"
   ""

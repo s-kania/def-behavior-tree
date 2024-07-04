@@ -1,6 +1,6 @@
 components {
   id: "script"
-  component: "/main/meteor.script"
+  component: "/example/meteor.script"
   position {
     x: 0.0
     y: 0.0

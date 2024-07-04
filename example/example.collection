@@ -1,7 +1,7 @@
-name: "main"
+name: "example"
 instances {
   id: "player"
-  prototype: "/main/player.go"
+  prototype: "/example/player.go"
   position {
     x: 320.0
     y: 568.0
@@ -111,7 +111,7 @@ embedded_instances {
   id: "spawner"
   data: "components {\n"
   "  id: \"script\"\n"
-  "  component: \"/main/spawner.script\"\n"
+  "  component: \"/example/spawner.script\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"
@@ -129,7 +129,7 @@ embedded_instances {
   "embedded_components {\n"
   "  id: \"meteorfactory\"\n"
   "  type: \"factory\"\n"
-  "  data: \"prototype: \\\"/main/meteor_large.go\\\"\\n"
+  "  data: \"prototype: \\\"/example/meteor_large.go\\\"\\n"
   "load_dynamically: false\\n"
   "dynamic_prototype: false\\n"
   "\"\n"
@@ -167,7 +167,7 @@ embedded_instances {
   id: "ui"
   data: "components {\n"
   "  id: \"gui\"\n"
-  "  component: \"/main/hud.gui\"\n"
+  "  component: \"/example/hud.gui\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"
@@ -270,10 +270,10 @@ embedded_instances {
   }
 }
 embedded_instances {
-  id: "main"
+  id: "example"
   data: "components {\n"
   "  id: \"script\"\n"
-  "  component: \"/main/main.script\"\n"
+  "  component: \"/example/example.script\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"
@@ -324,7 +324,7 @@ embedded_instances {
   "}\n"
   "components {\n"
   "  id: \"debug_window\"\n"
-  "  component: \"/main/debug_window.script\"\n"
+  "  component: \"/example/debug_window.script\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"

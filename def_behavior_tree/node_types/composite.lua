@@ -1,6 +1,6 @@
-local Composite = {}
-
-Composite.name = "Composite"
+local Composite = {
+    name = "Composite",
+}
 
 function Composite.getNextNode(tree_state)
     local compositeNode = tree_state.activeNode.parent

@@ -30,6 +30,7 @@ function Registry.registerTemplates(templates)
     }
     Registry.addNodeTemplateToTree(registeredTrees[tree_name], data.main_node, getNodeTemplate, bt_end_node_fn)
   end
+  print('ss')
 end
 
 function Registry.addNodeTemplateToTree(tree, template_data, getNodeTemplate, parent)
