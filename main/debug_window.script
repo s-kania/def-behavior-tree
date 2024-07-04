@@ -5,6 +5,18 @@ tree_template = nil
 tree_history = {}
 local BehaviourTree = require "def_behavior_tree.behavior_tree"
 
+local function get_decorator_status(node_name, status)
+    if node_name == "AlwaysFailDecorator" then
+        return false
+    elseif node_name == "AlwaysSucceedDecorator" then
+        return true
+    elseif node_name == "InvertDecorator" then
+        return not status
+    end
+
+    return status
+end
+
 local function init_bt_debug()
     for id, node in pairs(tree_template) do
         local node_success = node.success
@@ -12,7 +24,7 @@ local function init_bt_debug()
 
         node.success = function (tree_state)
             tree_history[id] = {
-                success = node.type.name ~= "InvertDecorator",
+                success = get_decorator_status(node.type.name, true),
                 delay = node_show_delay,
             }
             if paused then
@@ -25,7 +37,7 @@ local function init_bt_debug()
         end
         node.fail = function (tree_state)
             tree_history[id] = {
-                success = node.type.name == "InvertDecorator",
+                success = get_decorator_status(node.type.name, false),
                 delay = node_show_delay,
             }
             if paused then

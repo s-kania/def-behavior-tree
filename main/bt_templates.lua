@@ -11,17 +11,23 @@ local TASKS = {
 	STOP_DANCE = "STOP_DANCE",
     SET_ONE_SHOOT = "SET_ONE_SHOOT",
     SET_THREE_SHOOTS = "SET_THREE_SHOOTS",
+    SET_SIX_SHOOTS = "SET_SIX_SHOOTS",
+    IS_ONE_METEOR = "IS_ONE_METEOR",
+    IS_TWO_METEORS = "IS_TWO_METEORS",
+    IS_MORE_THAN_THREE_METEORS = "IS_MORE_THAN_THREE_METEORS",
+    GET_NEAREST_METEORS = "GET_NEAREST_METEORS",
 }
 
 local COMPOSITES = {
 	DANCE_UNTIL_FIND_ENEMY = "DANCE_UNTIL_FIND_ENEMY",
 	SHIP_AI = "SHIP_AI",
+    SHIP_AI_2 = "SHIP_AI_2",
     GET_RANDOM_SHOOTS_NUMBER = "GET_RANDOM_SHOOTS_NUMBER",
 }
 
 M.TREES = {
 	SHIP_BT = {
-		main_node = COMPOSITES.SHIP_AI
+		main_node = COMPOSITES.SHIP_AI_2
 	},
 }
 
@@ -73,7 +79,6 @@ M.NODES = {
 			else
 				task:fail()
 			end
-
 		end
 	},
 
@@ -98,13 +103,15 @@ M.NODES = {
 				factory.create("player#laserfactory", go.get_position(payload.id) + offset, go.get_rotation(payload.id))
 				if timer_task.counter == payload.shoots then
 					payload.target_meteor = nil
+                    payload.shoots = nil
+                    payload.nearest_meteors = nil
 				  	timer.cancel(handle)
 					task:success()
 				end
 			  end
 			  
 			timer_task.counter = 0
-			timer.delay(0.12, true, shoot)
+			timer.delay(0.5 / (2^(payload.shoots/3)), true, shoot)
 		end
 	},
 
@@ -141,6 +148,64 @@ M.NODES = {
         run = function (task, payload)
             payload.shoots = 3
             task:success()
+        end
+    },
+
+    [TASKS.SET_SIX_SHOOTS] = {
+        type = BehaviourTree.Task,
+        run = function (task, payload)
+            payload.shoots = 6
+            task:success()
+        end
+    },
+
+    [TASKS.GET_NEAREST_METEORS] = {
+        type = BehaviourTree.Task,
+        run = function (task, payload)
+            local ship_position = vmath.vector3(320, 568, 0)
+
+			payload.nearest_meteors = {}
+            local scan_distance = 400
+
+			for meteor_id, exist in pairs(meteors) do
+				if exist then
+					local meteor_distance_from_ship = vmath.length(ship_position - go.get_position(meteor_id))
+					if meteor_distance_from_ship < scan_distance then
+						table.insert(payload.nearest_meteors, meteor_id)
+					end
+				end
+			end
+            task:success()
+        end
+    },
+
+    [TASKS.IS_ONE_METEOR] = {
+        type = BehaviourTree.Task,
+        run = function (task, payload)
+            if #payload.nearest_meteors == 1 then
+                task:success()
+            end
+            task:fail()
+        end
+    },
+
+    [TASKS.IS_TWO_METEORS] = {
+        type = BehaviourTree.Task,
+        run = function (task, payload)
+            if #payload.nearest_meteors == 2 then
+                task:success()
+            end
+            task:fail()
+        end
+    },
+
+    [TASKS.IS_MORE_THAN_THREE_METEORS] = {
+        type = BehaviourTree.Task,
+        run = function (task, payload)
+            if #payload.nearest_meteors >= 3 then
+                task:success()
+            end
+            task:fail()
         end
     },
 
@@ -193,6 +258,51 @@ M.NODES = {
 				TASKS.IS_ALIVE,
 				COMPOSITES.DANCE_UNTIL_FIND_ENEMY,
                 COMPOSITES.GET_RANDOM_SHOOTS_NUMBER,
+				TASKS.SHOOT_TARGET_METEOR,
+				TASKS.WAIT,
+			},
+		},
+	},
+
+    [COMPOSITES.SHIP_AI_2] = {
+		type = BehaviourTree.RepeatUntilFailDecorator,
+		node = {
+			type = BehaviourTree.Sequence,
+			nodes = {
+				TASKS.IS_ALIVE,
+				COMPOSITES.DANCE_UNTIL_FIND_ENEMY,
+                {
+                    type = BehaviourTree.Sequence,
+                    nodes = {
+                        TASKS.GET_NEAREST_METEORS,
+                        {
+                            type = BehaviourTree.Selector,
+                            nodes = {
+                                {
+                                    type = BehaviourTree.Sequence,
+                                    nodes = {
+                                        TASKS.IS_ONE_METEOR,
+                                        TASKS.SET_ONE_SHOOT,
+                                    },
+                                },
+                                {
+                                    type = BehaviourTree.Sequence,
+                                    nodes = {
+                                        TASKS.IS_TWO_METEORS,
+                                        TASKS.SET_THREE_SHOOTS,
+                                    },
+                                },
+                                {
+                                    type = BehaviourTree.Sequence,
+                                    nodes = {
+                                        TASKS.IS_MORE_THAN_THREE_METEORS,
+                                        TASKS.SET_SIX_SHOOTS,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
 				TASKS.SHOOT_TARGET_METEOR,
 				TASKS.WAIT,
 			},
