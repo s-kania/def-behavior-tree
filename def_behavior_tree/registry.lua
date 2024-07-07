@@ -1,4 +1,5 @@
 local registeredTrees = {}
+local empty_fn = function () end
 
 local Registry = {}
 
@@ -41,12 +42,12 @@ function Registry.addNodeTemplateToTree(tree, template_data, getNodeTemplate, pa
     name = template_name,
     parent = parent,
     type = template.type,
-    start = template.type.start or function () end,
-    run = template.type.run or function () end,
-    finish = template.type.finish or function () end,
-    _start = template.start or function () end,
-    _run = template.run or function () end,
-    _finish = template.finish or function () end,
+    start = template.type.start or empty_fn,
+    run = template.type.run or empty_fn,
+    finish = template.type.finish or empty_fn,
+    _start = template.start or empty_fn,
+    _run = template.run or empty_fn,
+    _finish = template.finish or empty_fn,
     success = template.type.success,
     fail = template.type.fail,
     chance = template.chance,
