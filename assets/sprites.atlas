@@ -1,0 +1,130 @@
+images {
+  image: "/assets/images/1x/bg-1.png"
+}
+images {
+  image: "/assets/images/1x/roid-large.png"
+}
+images {
+  image: "/assets/images/1x/roid-small.png"
+}
+images {
+  image: "/assets/images/life.png"
+}
+animations {
+  id: "laser"
+  images {
+    image: "/assets/images/1x/bullet-0.png"
+  }
+  images {
+    image: "/assets/images/1x/bullet-1.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 20
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "ship_idle"
+  images {
+    image: "/assets/images/1x/ship-0.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 20
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "explode"
+  images {
+    image: "/assets/images/explosion/explosion_00000.png"
+  }
+  images {
+    image: "/assets/images/explosion/explosion_00001.png"
+  }
+  images {
+    image: "/assets/images/explosion/explosion_00002.png"
+  }
+  images {
+    image: "/assets/images/explosion/explosion_00003.png"
+  }
+  images {
+    image: "/assets/images/explosion/explosion_00004.png"
+  }
+  images {
+    image: "/assets/images/explosion/explosion_00005.png"
+  }
+  images {
+    image: "/assets/images/explosion/explosion_00006.png"
+  }
+  images {
+    image: "/assets/images/explosion/explosion_00007.png"
+  }
+  images {
+    image: "/assets/images/explosion/explosion_00008.png"
+  }
+  images {
+    image: "/assets/images/explosion/explosion_00009.png"
+  }
+  images {
+    image: "/assets/images/explosion/explosion_00010.png"
+  }
+  images {
+    image: "/assets/images/explosion/explosion_00011.png"
+  }
+  images {
+    image: "/assets/images/explosion/explosion_00012.png"
+  }
+  images {
+    image: "/assets/images/explosion/explosion_00013.png"
+  }
+  images {
+    image: "/assets/images/explosion/explosion_00014.png"
+  }
+  images {
+    image: "/assets/images/explosion/explosion_00015.png"
+  }
+  images {
+    image: "/assets/images/explosion/explosion_00016.png"
+  }
+  images {
+    image: "/assets/images/explosion/explosion_00017.png"
+  }
+  images {
+    image: "/assets/images/explosion/explosion_00018.png"
+  }
+  images {
+    image: "/assets/images/explosion/explosion_00019.png"
+  }
+  images {
+    image: "/assets/images/explosion/explosion_00020.png"
+  }
+  images {
+    image: "/assets/images/explosion/explosion_00021.png"
+  }
+  images {
+    image: "/assets/images/explosion/explosion_00022.png"
+  }
+  images {
+    image: "/assets/images/explosion/explosion_00023.png"
+  }
+  playback: PLAYBACK_ONCE_FORWARD
+  fps: 20
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "ship_thrust"
+  images {
+    image: "/assets/images/1x/ship-1.png"
+  }
+  images {
+    image: "/assets/images/1x/ship-2.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 20
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+margin: 0
+extrude_borders: 2
+inner_padding: 0

@@ -1,0 +1,97 @@
+local BehaviourTree = require "def_behavior_tree.behavior_tree"
+bt_tree = {}
+
+function init(self)
+	self.state = {
+		direction = go.get_rotation(),
+		rot = vmath.quat(),
+		-- Base rotations half a lap in each direction
+		rot_left = vmath.quat_rotation_z(2),
+		rot_right = vmath.quat_rotation_z(-2),
+		
+		-- if speed = 1 then ship rotates 1/2 rotation each second.
+		max_speed = 30,
+		speed = 0,
+		fire_cooldown = 0,
+		thrust = false,
+		thrusting = false,
+		id = go.get_id()
+	}
+	
+
+	bt_tree = BehaviourTree.new({
+		tree_name = "SHIP_BT",
+		payload = self.state,
+	})
+	bt_tree.nodes_history = {}
+	bt_tree:run()
+
+	msg.post("#", "hide")
+end
+
+function update(self, dt)
+	self.state.direction = vmath.slerp(dt * self.state.speed, self.state.direction, self.state.direction * self.state.rot)
+	go.set_rotation(self.state.direction)
+	self.state.rot = vmath.quat()
+	
+	if self.state.speed <= self.state.max_speed then
+		self.state.speed = self.state.speed + (16 * dt)
+	end
+
+	if self.state.thrust and not self.state.thrusting then
+		sprite.play_flipbook("#sprite", "ship_thrust")
+		self.state.thrusting = true
+	end
+
+	if not self.state.thrust and self.state.thrusting then
+		sprite.play_flipbook("#sprite","ship_idle")
+		self.state.thrusting = false
+	end
+		
+	
+	-- self.state.fire_cooldown = self.state.fire_cooldown - dt
+	self.state.thrust = false
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("go") then
+		sprite.play_flipbook("#sprite", "ship_idle")
+		msg.post("#", "acquire_input_focus")
+		msg.post(".", "enable")
+	elseif message_id == hash("hide") then
+		msg.post("#", "release_input_focus")
+		msg.post(".", "disable")
+	elseif message_id == hash("collision_response") then
+		-- player dies
+		msg.post("example#script", "player_dies")
+		factory.create("#explosionfactory")
+		msg.post("#", "release_input_focus")
+		msg.post(".", "disable")
+	end
+end
+
+function on_input(self, action_id, action)
+	if action_id == hash("left") then
+		self.state.thrust = true
+		self.state.rot = self.state.rot_left
+		if action.pressed then
+			self.state.speed = 0
+		end
+	elseif action_id == hash("right") then
+		self.state.thrust = true
+		self.state.rot = self.state.rot_right
+		if action.pressed then
+			self.state.speed = 0
+		end
+	elseif action_id == hash("fire") then
+		if self.state.fire_cooldown > 0 then
+			return
+		end 
+
+		sound.play("#fire")
+
+		local offset = vmath.rotate(self.state.direction, vmath.vector3(0, 50, 0))
+		factory.create("#laserfactory", go.get_position() + offset)
+		self.state.fire_cooldown = 0.12
+	end
+end

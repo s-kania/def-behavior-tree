@@ -1,4 +1,20 @@
-mouse_trigger {
-  input: MOUSE_BUTTON_1
-  action: "touch"
+key_trigger {
+  input: KEY_SPACE
+  action: "fire"
+}
+key_trigger {
+  input: KEY_LEFT
+  action: "left"
+}
+key_trigger {
+  input: KEY_RIGHT
+  action: "right"
+}
+key_trigger {
+  input: KEY_ESC
+  action: "quit"
+}
+key_trigger {
+  input: KEY_ENTER
+  action: "bomb"
 }

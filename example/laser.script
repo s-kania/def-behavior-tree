@@ -1,0 +1,26 @@
+function init(self)
+	self.rot = go.get_rotation()
+	self.speed = 800
+	-- rotate the velocity vector to our orientation.
+	self.velocity = vmath.rotate(self.rot, vmath.vector3(0, self.speed, 0))
+	self.d = 0
+end
+
+function update(self, dt)
+	local pos = go.get_position()
+	pos = pos + self.velocity * dt
+	self.d = self.d + self.speed * dt
+	go.set_position(pos)
+
+	if self.d > 650 then
+		-- delete the shot when it has travelled off screen.
+		go.delete()
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("collision_response") then
+		-- delete the shot if it hits something.
+		go.delete()
+	end
+end

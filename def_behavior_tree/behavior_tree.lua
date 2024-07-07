@@ -1,63 +1,80 @@
-local class         = require "def_behavior_tree.middleclass"
 local Registry      = require "def_behavior_tree.registry"
-local Node          = require "def_behavior_tree.node_types.node"
-local BehaviorTree = class("BehaviorTree", Node)
+local BehaviorTree = {}
+BehaviorTree.__index = BehaviorTree
  
-BehaviorTree.Node                    = Node
-BehaviorTree.Registry                = Registry
-BehaviorTree.Task                    = Node
-BehaviorTree.BranchNode              = require "def_behavior_tree.node_types.branch_node"
-BehaviorTree.Priority                = require "def_behavior_tree.node_types.priority"
-BehaviorTree.ActivePriority          = require "def_behavior_tree.node_types.active_priority"
-BehaviorTree.Random                  = require "def_behavior_tree.node_types.random"
-BehaviorTree.Sequence                = require "def_behavior_tree.node_types.sequence"
-BehaviorTree.Decorator               = require "def_behavior_tree.node_types.decorator"
-BehaviorTree.InvertDecorator         = require "def_behavior_tree.node_types.invert_decorator"
-BehaviorTree.AlwaysFailDecorator     = require "def_behavior_tree.node_types.always_fail_decorator"
-BehaviorTree.AlwaysSucceedDecorator  = require "def_behavior_tree.node_types.always_succeed_decorator"
-BehaviorTree.RepeatUntilFail         = require "def_behavior_tree.node_types.repeat_until_fail"
+BehaviorTree.Registry                   = Registry
+BehaviorTree.Task                       = require "def_behavior_tree.node_types.node"
+BehaviorTree.Composite                  = require "def_behavior_tree.node_types.composite"
+BehaviorTree.Sequence                   = require "def_behavior_tree.node_types.sequence"
+BehaviorTree.Selector                   = require "def_behavior_tree.node_types.selector"
+BehaviorTree.Random                     = require "def_behavior_tree.node_types.random"
+BehaviorTree.RandomWithChances          = require "def_behavior_tree.node_types.random_with_chances"
+BehaviorTree.Decorator                  = require "def_behavior_tree.node_types.decorator"
+BehaviorTree.InvertDecorator            = require "def_behavior_tree.node_types.invert_decorator"
+BehaviorTree.AlwaysFailDecorator        = require "def_behavior_tree.node_types.always_fail_decorator"
+BehaviorTree.AlwaysSucceedDecorator     = require "def_behavior_tree.node_types.always_succeed_decorator"
+BehaviorTree.RepeatUntilFailDecorator   = require "def_behavior_tree.node_types.repeat_until_fail_decorator"
+BehaviorTree.ChanceDecorator            = require "def_behavior_tree.node_types.chance_decorator"
 
-BehaviorTree.register = Registry.register
-BehaviorTree.getNode = Registry.getNode
+BehaviorTree.registerTemplates = Registry.registerTemplates
+BehaviorTree.getTreeTemplate = Registry.getTreeTemplate
 
-function BehaviorTree:initialize(config)
-  Node.initialize(self, config)
-  if type(self.tree) == "string" then
-    self.tree = Registry.getNode(self.tree)
-  end
-  -- przniesc ustawianie obiektu tutaj
-end
-
--- tu sie zaczyna zabawa
-function BehaviorTree:run(object)
-  if self.running then -- to na początek będzie false, ale jesli sprobojemy drugi raz odpalic drzewo, nie wiem co zrobi
-    return --call running if we have control
+function BehaviorTree:run()
+  if self.running then
+    return
   else
     self.running = true
-    self.object = object or self.object -- obiekt np ship
-    self.rootNode = Registry.getNode(self.tree) -- pierwszy node z drzewa, w przypadku simple sailor jest to repeat_until_fail
-    self.rootNode:setParentNode(self) -- ustawia kontrole, ja bym nazwal to parentNode
-    self.rootNode:start(self.object) -- odpala inicjalizator taska, w moim przypadku nic
-    self.rootNode:run(self.object) -- to jest pojebane bo ustawia te dziwne globalne sukcesy z NODE, ktore moga się plątać z innymi
+    self.rootNode = self:getNode(1)
+
+    self:setActiveNode(self.rootNode)
+    self.rootNode.start(self)
+    self.rootNode.run(self)
   end
 end
 
 function BehaviorTree:restart()
-    self:fail()
     self.running = true
-    self.rootNode:setParentNode(self)
-    self.rootNode:start(self.object)
-    self.rootNode:run(self.object)
+
+    self:setActiveNode(self.rootNode)
+    self.rootNode.start(self)
+    self.rootNode.run(self)
+end
+
+function BehaviorTree:setActiveNode(node)
+    self.activeNode = node
+end
+
+function BehaviorTree:getNode(nodeID)
+    return Registry.getNodeFromTree(nodeID, self.name)
 end
 
 function BehaviorTree:success()
-  self.rootNode:finish(self.object)
-  self.running = false
+    self.rootNode.finish(self)
+    self.running = false
 end
 
 function BehaviorTree:fail()
-  self.rootNode:finish(self.object)
-  self.running = false
+    self.rootNode.finish(self)
+    self.running = false
+end
+
+function BehaviorTree:getRandomBetween(x, y)
+    if self.rng then
+        return self.rng(x, y)
+    end
+    return math.random(x, y)
+end
+
+function BehaviorTree.new(config)
+	local self = setmetatable({
+        name = config.tree_name,
+        payload = config.payload,
+        rng = config.rng,
+        activeNode = nil,
+        running = false,
+        rootNode = nil,
+    }, BehaviorTree)
+    return self
 end
 
 return BehaviorTree

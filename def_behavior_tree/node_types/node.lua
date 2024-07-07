@@ -1,37 +1,32 @@
-local Registry  = require "def_behavior_tree.registry"
-local Node      = class("Node")
+local Node = {
+    name = "Node"
+}
 
-function Node:initialize(config)
-  config = config or {}
-  for k, v in pairs(config) do
-    self[k] = v
-  end
+local function getNodeArgs(tree_state)
+    return {
+        success = function () tree_state.activeNode.success(tree_state) end,
+        fail = function () tree_state.activeNode.fail(tree_state) end,
+    }, tree_state.payload
 end
 
-function Node:start() end
-function Node:finish() end
-function Node:run() end
-
-
-function Node:setObject(object)
-  self.object = object
+function Node.start(tree_state)
+    tree_state.activeNode._start(getNodeArgs(tree_state))
 end
 
-function Node:setParentNode(parent)
-  self.parent = parent
+function Node.run(tree_state)
+    tree_state.activeNode._run(getNodeArgs(tree_state))
 end
 
-
-function Node:success()
-  if self.parent then
-    self.parent:success()
-  end
+function Node.finish(tree_state)
+    tree_state.activeNode._finish(getNodeArgs(tree_state))
 end
 
-function Node:fail()
-  if self.parent then
-    self.parent:fail()
-  end
+function Node.success(tree_state)
+    tree_state.activeNode.parent.success(tree_state)
+end
+
+function Node.fail(tree_state)
+    tree_state.activeNode.parent.fail(tree_state)
 end
 
 return Node

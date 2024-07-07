@@ -1,0 +1,146 @@
+paused = false
+pause_fn = nil
+node_show_delay = 1
+tree_template = nil
+tree_history = {}
+local BehaviourTree = require "def_behavior_tree.behavior_tree"
+
+local function get_status(node_name, status)
+    if node_name == "AlwaysFailDecorator" then
+        return false
+    elseif node_name == "AlwaysSucceedDecorator" then
+        return true
+    elseif node_name == "InvertDecorator" then
+        return not status
+    end
+
+    return status
+end
+
+local function init_bt_debug()
+    for id, node in pairs(tree_template) do
+        local node_success = node.success
+        local node_fail = node.fail
+
+        node.success = function (tree_state)
+            tree_history[id] = {
+                success = get_status(node.type.name, true),
+                delay = node_show_delay,
+            }
+            if paused then
+                pause_fn = function()
+                    node_success(tree_state)
+                end
+            else
+                node_success(tree_state)
+            end
+        end
+        node.fail = function (tree_state)
+            tree_history[id] = {
+                success = get_status(node.type.name, false),
+                delay = node_show_delay,
+            }
+            if paused then
+                pause_fn = function()
+                    node_fail(tree_state)
+                end
+            else
+                node_fail(tree_state)
+            end
+        end
+    end
+end
+
+local function show_node_state(node_index)
+    if tree_history[node_index] then
+        local node_state = tree_history[node_index]
+        imgui.same_line()
+        if node_state.success then
+            imgui.text_colored("Success", 0, 1, 0, node_state.delay )
+        else
+            imgui.text_colored("Fail", 1, 0, 0, node_state.delay )
+        end
+    end
+end
+
+local function create_node_button(node_index, tree_template)
+    local node_template = tree_template[node_index]
+
+    if node_template.nodes then
+        if imgui.tree_node(node_template.id .. ": " ..  node_template.name, imgui.TREENODE_DEFAULT_OPEN) then
+                show_node_state(node_index)
+                for _, node in ipairs(node_template.nodes) do
+                    create_node_button(node.id, tree_template)
+                end
+            imgui.tree_pop()
+        end
+ 
+    elseif node_template.node then
+        if imgui.tree_node(node_template.id .. ": " ..  node_template.name, imgui.TREENODE_DEFAULT_OPEN) then
+                show_node_state(node_index)
+                create_node_button(node_template.node.id, tree_template)
+            imgui.tree_pop()
+        end
+
+    else
+        if imgui.button(node_template.id .. ": " ..  node_template.name, 180, 20) then
+            local node = bt_tree:getNode(node_template.id)
+            bt_tree:setActiveNode(node)
+            bt_tree.activeNode.start(bt_tree)
+            bt_tree.activeNode.run(bt_tree)
+        end
+        show_node_state(node_index)
+    end
+end
+
+local function update_bt_tree(self)
+    if not tree_template then
+        return
+    end
+
+    create_node_button(1, tree_template)
+end
+
+function update(self, dt)
+    for key, state in pairs(tree_history) do
+        state.delay = state.delay - dt
+    end
+
+    imgui.begin_window("BehaviorTree - debug window")
+		if paused then
+			if imgui.button("Resume", 100, 20) then
+				paused = false
+				pause_fn()
+				pause_fn = nil
+			end
+
+            local changed, int = imgui.input_int("Node ID", self.int or 1)
+            if changed then
+                self.int = int
+            end
+
+            if imgui.button("Go to node", 100, 20) then
+                local node = bt_tree:getNode(self.int)
+                if node then
+				    bt_tree:setActiveNode(node)
+                    bt_tree.activeNode.start(bt_tree)
+                    bt_tree.activeNode.run(bt_tree)
+                end
+			end
+		else
+			if imgui.button("Pause", 100, 20) then
+				paused = true
+			end
+		end
+        update_bt_tree(self)
+	imgui.end_window()
+end
+
+function on_message(self, message_id, message, sender)
+    if message_id == hash("initialize_debug") then
+        tree_template = BehaviourTree.getTreeTemplate("SHIP_BT")
+
+        imgui.set_ini_filename()
+        init_bt_debug()
+    end
+end

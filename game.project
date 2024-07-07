@@ -1,16 +1,22 @@
 [bootstrap]
 main_collection = /example/example.collectionc
+render = /render/roids.renderc
 
 [script]
 shared_state = 1
 
 [display]
-width = 960
-height = 640
+width = 1280
+height = 1136
 
 [project]
 title = def-behavior-tree
+dependencies#0 = https://github.com/britzl/extension-imgui/archive/refs/tags/2.1.1.zip
 
 [library]
 include_dirs = def_behavior_tree
+
+[input]
+game_binding = /imgui/bindings/imgui.input_bindingc
+use_accelerometer = 0
 

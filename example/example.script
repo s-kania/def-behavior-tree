@@ -1,29 +1,57 @@
+local BehaviourTree = require "def_behavior_tree.behavior_tree"
+local bt_templates = require "example.bt_templates"
+
+go.property("dummy", 0)
+
 function init(self)
-	local s = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	print(reverse_s) --> ZYXWVUTSRQPONMLKJIHGFEDCBAzyxwvutsrqponmlkjihgfedcba
-end
+	BehaviourTree.registerTemplates(bt_templates)
 
-function final(self)
-	-- Add finalization code here
-	-- Remove this function if not needed
-end
-
-function update(self, dt)
-	-- Add update code here
-	-- Remove this function if not needed
+	lives = 3
+	meteors = {}
+	self.score = 0
+	
+    msg.post("example#debug_window", "initialize_debug")
+	msg.post("player#script", "hide")
+	msg.post("spawner#script", "stop")
+	msg.post("#", "new_game")
 end
 
 function on_message(self, message_id, message, sender)
-	-- Add message-handling code here
-	-- Remove this function if not needed
-end
-
-function on_input(self, action_id, action)
-	-- Add input-handling code here
-	-- Remove this function if not needed
-end
-
-function on_reload(self)
-	-- Add reload-handling code here
-	-- Remove this function if not needed
+	if message_id == hash("new_game") then
+		msg.post("ui#gui", "get_ready")
+		msg.post("ui#gui", "set_lives", { lives = lives })
+		-- wait a bit, then start the game
+		go.animate("#", "dummy", go.PLAYBACK_ONCE_FORWARD, 1, go.EASING_LINEAR, 1, 0, function()
+			msg.post("player#script", "go")
+			msg.post("ui#gui", "go")
+			msg.post("spawner#script", "run")
+			msg.post("ui#gui", "set_lives", { lives = lives - 1 })
+		end)
+	elseif message_id == hash("player_dies") then
+		msg.post("spawner#script", "stop")
+		lives = lives - 1
+		if lives <= 0 then
+			-- wait a bit before displaying game over screen
+			go.animate("#", "dummy", go.PLAYBACK_ONCE_FORWARD, 1, go.EASING_LINEAR, 1.0, 0, function()
+				msg.post("ui#gui", "game_over")
+			end)
+		else
+			msg.post("#", "retry")
+		end
+	elseif message_id == hash("retry") then
+		-- wait a bit, then clear the playfield
+		go.animate("#", "dummy", go.PLAYBACK_ONCE_FORWARD, 1, go.EASING_LINEAR, 2.0, 0, function()
+			msg.post("spawner#script", "delete_all")
+			-- wait some more, then restart
+			go.animate("#", "dummy", go.PLAYBACK_ONCE_FORWARD, 1, go.EASING_LINEAR, 1.0, 0, function()
+				msg.post("player#script", "go")
+				msg.post("spawner#script", "run")
+				msg.post("ui#gui", "set_lives", { lives = lives - 1 })
+				msg.post("ui#gui", "go")
+			end)
+		end)
+	elseif message_id == hash("meteor_destroyed") then
+		self.score = self.score + 100
+		msg.post("ui#gui", "set_score", { score = self.score })
+	end
 end

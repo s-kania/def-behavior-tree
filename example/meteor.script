@@ -1,0 +1,52 @@
+go.property("type", hash("large"))
+go.property("velocity", vmath.vector3())
+
+function init(self)
+	-- random rotation
+	local r = (math.random() - 0.5) * 3.1415
+	self.rot = vmath.quat_rotation_z(r)
+
+	-- max distance the meteor will travel is diagonally
+	self.life = 1600
+	msg.post("spawner#script", "meteor_created")
+end
+
+function update(self, dt)
+	local r = go.get_rotation()
+	r = vmath.slerp(dt, r, r * self.rot)
+	go.set_rotation(r)
+
+	local p = go.get_position() + self.velocity * dt
+	go.set_position(p)    
+	self.life = self.life - vmath.length(self.velocity) * dt
+	if self.life < 0 then
+		msg.post("spawner#script", "meteor_destroyed")
+		go.delete()
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("collision_response") and self.life > 0 then
+		sound.play("#explode")
+		msg.post("example#script", "meteor_destroyed")
+		msg.post("spawner#script", "meteor_destroyed")
+		go.delete()
+		self.life = 0 -- to prevent more than one collision response
+		
+		if self.type == hash("large") then
+			-- split into two small meteors
+			local p1 = vmath.vector3()
+			local p2 = vmath.vector3()
+			p1.x = -self.velocity.y
+			p1.y = self.velocity.x
+			p2.x = self.velocity.y
+			p2.y = -self.velocity.x
+			-- scale offset vectors
+			local o1 = p1 * (math.random() / 15 + 0.15)
+			local o2 = p2 * (math.random() / 15 + 0.15)
+			local pos = go.get_position()
+			factory.create("#factory", pos + o1, nil, { velocity = self.velocity + o1 })
+			factory.create("#factory", pos + o2, nil, { velocity = self.velocity + o2 })
+		end
+	end
+end
