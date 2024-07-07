@@ -54,7 +54,7 @@ M.NODES = {
 			end)
 		end
 	},
-	
+
 	[TASKS.SELECT_CLOSEST_METEOR] = {
 		type = BehaviourTree.Task,
 		run = function(task, payload)
@@ -184,7 +184,7 @@ M.NODES = {
         type = BehaviourTree.Task,
         run = function (task, payload)
             if #payload.nearest_meteors == 1 then
-                task:success()
+                return task:success()
             end
             task:fail()
         end
@@ -194,7 +194,7 @@ M.NODES = {
         type = BehaviourTree.Task,
         run = function (task, payload)
             if #payload.nearest_meteors == 2 then
-                task:success()
+                return task:success()
             end
             task:fail()
         end
@@ -204,7 +204,7 @@ M.NODES = {
         type = BehaviourTree.Task,
         run = function (task, payload)
             if #payload.nearest_meteors >= 3 then
-                task:success()
+                return task:success()
             end
             task:fail()
         end
