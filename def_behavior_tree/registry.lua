@@ -3,6 +3,8 @@ local empty_fn = function () end
 
 local Registry = {}
 
+Registry.registered = registeredTrees
+
 --[[
   registeredTrees -> node tree with parent-child relation based on index
   thanks to this we can traverse on tree, save, load
