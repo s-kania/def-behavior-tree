@@ -62,19 +62,15 @@ function BehaviorTree:fail()
 end
 
 function BehaviorTree:getRandomBetween(x, y)
-  if self.rng then
-    return self.rng(x, y)
-  end
-  return math.random(x, y)
+  return self.rng(x, y)
 end
 
 function BehaviorTree.new(config)
   local self = setmetatable({
     name = config.tree_name,
     payload = config.payload,
-    rng = config.rng,
+    rng = config.rng or math.random,
     running = false,
-    rootNode = nil,
   }, BehaviorTree)
   return self
 end

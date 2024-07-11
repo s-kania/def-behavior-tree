@@ -57,7 +57,7 @@ function Registry.addNodeTemplateToTree(tree, template_data, getNodeTemplate, pa
   local nodeID = #tree
   tree_template.id = nodeID
 
-  if template.nodes then --sequences
+  if template.nodes then --composites
     tree_template.nodes = {}
 
     for _, template_data in ipairs(template.nodes) do

@@ -1,4 +1,4 @@
-local Decorator  = require "def_behavior_tree.node_types.decorator"
+local Decorator = require "def_behavior_tree.node_types.decorator"
 local InvertDecorator = {
     name = "InvertDecorator",
     start = Decorator.start,

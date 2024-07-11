@@ -1,4 +1,4 @@
-local Decorator  = require "def_behavior_tree.node_types.decorator"
+local Decorator = require "def_behavior_tree.node_types.decorator"
 
 local RepeatUntilFailDecorator = {
     name = "RepeatUntilFailDecorator",
