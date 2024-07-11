@@ -19,62 +19,64 @@ BehaviorTree.ChanceDecorator            = require "def_behavior_tree.node_types.
 BehaviorTree.registerTemplates = Registry.registerTemplates
 BehaviorTree.getTreeTemplate = Registry.getTreeTemplate
 
-function BehaviorTree:run()
+function BehaviorTree:run(activeNodeID)
   if self.running then
     return
   else
     self.running = true
-    self.rootNode = self:getNode(1)
+    local firstRunNode = self:getNode(activeNodeID or 1)
 
-    self:setActiveNode(self.rootNode)
-    self.rootNode.start(self)
-    self.rootNode.run(self)
+    self:setActiveNode(firstRunNode)
+    firstRunNode.start(self)
+    firstRunNode.run(self)
   end
 end
 
 function BehaviorTree:restart()
-    self.running = true
+  self.running = true
 
-    self:setActiveNode(self.rootNode)
-    self.rootNode.start(self)
-    self.rootNode.run(self)
+  local rootNode = self:getNode(1)
+  self:setActiveNode(rootNode)
+  rootNode.start(self)
+  rootNode.run(self)
 end
 
 function BehaviorTree:setActiveNode(node)
-    self.activeNode = node
+  self.activeNode = node
 end
 
 function BehaviorTree:getNode(nodeID)
-    return Registry.getNodeFromTree(nodeID, self.name)
+  return Registry.getNodeFromTree(nodeID, self.name)
 end
 
 function BehaviorTree:success()
-    self.rootNode.finish(self)
-    self.running = false
+  local rootNode = self:getNode(1)
+  rootNode.finish(self)
+  self.running = false
 end
 
 function BehaviorTree:fail()
-    self.rootNode.finish(self)
-    self.running = false
+  local rootNode = self:getNode(1)
+  rootNode.finish(self)
+  self.running = false
 end
 
 function BehaviorTree:getRandomBetween(x, y)
-    if self.rng then
-        return self.rng(x, y)
-    end
-    return math.random(x, y)
+  if self.rng then
+    return self.rng(x, y)
+  end
+  return math.random(x, y)
 end
 
 function BehaviorTree.new(config)
-	local self = setmetatable({
-        name = config.tree_name,
-        payload = config.payload,
-        rng = config.rng,
-        activeNode = nil,
-        running = false,
-        rootNode = nil,
-    }, BehaviorTree)
-    return self
+  local self = setmetatable({
+    name = config.tree_name,
+    payload = config.payload,
+    rng = config.rng,
+    running = false,
+    rootNode = nil,
+  }, BehaviorTree)
+  return self
 end
 
 return BehaviorTree
