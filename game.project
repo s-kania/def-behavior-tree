@@ -11,6 +11,8 @@ height = 1136
 
 [project]
 title = def-behavior-tree
+developer = Stefan Kania
+version = 1.0.0
 dependencies#0 = https://github.com/britzl/extension-imgui/archive/refs/tags/2.1.1.zip
 
 [library]
