@@ -44,9 +44,6 @@ function Registry.addNodeTemplateToTree(tree, template_data, getNodeTemplate, pa
     start = template.type.start or empty_fn,
     run = template.type.run or empty_fn,
     finish = template.type.finish or empty_fn,
-    _start = template.start or empty_fn,
-    _run = template.run or empty_fn,
-    _finish = template.finish or empty_fn,
     success = template.type.success,
     fail = template.type.fail,
     chance = template.chance,
@@ -66,6 +63,10 @@ function Registry.addNodeTemplateToTree(tree, template_data, getNodeTemplate, pa
     end
   elseif template.node then --decorators
     tree_template.node = Registry.addNodeTemplateToTree(tree, template.node, getNodeTemplate, tree_template)
+  else
+    tree_template._start = template.start or empty_fn
+    tree_template._run = template.run or empty_fn
+    tree_template._finish = template.finish or empty_fn
   end
 
   return tree_template

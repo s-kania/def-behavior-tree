@@ -25,17 +25,16 @@ function BehaviorTree:run(activeNodeID)
   else
     self.running = true
     local firstRunNode = self:getNode(activeNodeID or 1)
-
     self:setActiveNode(firstRunNode)
     firstRunNode.start(self)
     firstRunNode.run(self)
   end
 end
 
-function BehaviorTree:restart()
+function BehaviorTree:restart(activeNodeID)
   self.running = true
 
-  local rootNode = self:getNode(1)
+  local rootNode = self:getNode(activeNodeID or 1)
   self:setActiveNode(rootNode)
   rootNode.start(self)
   rootNode.run(self)

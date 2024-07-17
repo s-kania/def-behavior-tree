@@ -11,7 +11,7 @@ height = 1136
 
 [project]
 title = def-behavior-tree
-dependencies#0 = https://github.com/britzl/extension-imgui/archive/refs/tags/2.1.1.zip
+dependencies#0 = https://github.com/britzl/extension-imgui/archive/refs/tags/2.3.0.zip
 
 [library]
 include_dirs = def_behavior_tree
