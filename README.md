@@ -340,7 +340,7 @@ Let's go into the jungle of implemenation.
 
 ### Registry
 
-This module stores registered trees templates. Tree template is table created by registry module for each tree defined by user in its templates under `TREES. User template is created by you, like in examples above. Each tree template has its own unique list of nodes with a unique ID for each. In turn, each node in such a tree has references to functions from user-created templates and its parent and possibly children.
+This module stores registered trees templates. Tree template is table created by registry module for each tree defined by user in its templates under `TREES`. User template is created by you, like in examples above. Each tree template has its own unique list of nodes with a unique ID for each. In turn, each node in such a tree has references to functions from user-created templates and its parent and possibly children.
 Why in this way? In templates you can use the nodes you have created as many times as you want. They can nest, so if you want to be able to jump to any node in the tree, each node in the tree must have a unique ID.
 For example, we have the node `IS_ALIVE`. It is used several times in the tree in different places. When registering templates, each reference to this node will generate a unique ID and an object to hold the reference to the function from the template created by the user, as well as the unique parent.
 
@@ -374,7 +374,7 @@ local tree_template = BehaviourTree.getTreeTemplate("BT_NAME")
 ```
 
 ### BehaviorTree object
-Simply put, created BT object stores references to the active node from the tree template. It then fires functions from the references to the node type.
+Simply put, created BT object stores references to the active node from the tree template. It then fires functions from the references in node type.
 
 # Example
 In the video from beggining, you can see that debug window. I took oficial Roids example and changed player steering to behavior tree.
