@@ -2,7 +2,7 @@
 
 The def-behavior tree is a library for creating behavioral trees that allow you to easily manage advanced NPC behaviors in your game.
 It's functional and event-driven, which means that the next nodes are activated only when the previous one returns success or false.
-It also have ability to run any node from any moment, which means, you can easily save active node ID and run it when game load for example.
+It also have ability to run any node from any moment, so you can easily save active node ID and run it when game load for example.
 
 If you are interested in how these trees work, be sure to read this article -> [Behavior trees for AI: How they work (gamedeveloper.com)](https://www.gamedeveloper.com/programming/behavior-trees-for-ai-how-they-work)
 I was inspired by it and used some nodes descriptions in this Readme.
