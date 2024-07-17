@@ -9,7 +9,7 @@ I was inspired by it and used some nodes descriptions in this Readme.
 
 This library is based on [this](https://github.com/tanema/behaviourtree.lua) implementation by tanema, but heavily modified.
 
-https://www.youtube.com/watch?v=1xFsJQuCiq4
+[![Example for def-behavior-tree library.](https://img.youtube.com/vi/1xFsJQuCiq4/0.jpg)](https://www.youtube.com/watch?v=1xFsJQuCiq4)
 
 Video shows Roids example, but instead of player input, there is AI with behavior tree from this library.
 There is also debug window showing traversal on nodes and their status.
