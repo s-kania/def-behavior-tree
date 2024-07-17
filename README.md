@@ -127,7 +127,7 @@ nodes = {
 A sequence will visit each child in order, starting with the first, and when that succeeds will call the second, and so on down the list of children. If any child fails it will immediately return failure to the parent. If the last child in the sequence succeeds, then the sequence will return success to its parent.
 
 ```lua
-"YOUR_NODE_NAME" = {
+{
     type = BehaviorTree.Sequence, -- define type of node
     nodes = {
         "NODE_NAME",
@@ -153,7 +153,7 @@ A sequence will visit each child in order, starting with the first, and when tha
 Selector will return a success if any of its children succeed and not process any further children. It will process the first child, and if it fails will process the second, and if that fails will process the third, until a success is reached, at which point it will instantly return success. It will fail if all children fail.
 
 ```lua
-"YOUR_NODE_NAME" = {
+{
     type = BehaviorTree.Selector,
     nodes = {
         "NODE_NAME",
@@ -167,7 +167,7 @@ Selector will return a success if any of its children succeed and not process an
 This node select random node from `nodes` list. By default, function which get random numbers is `math.random`, but you can pass your own rnd generator to tree. How to do this is explained later.
 
 ```lua
-"YOUR_NODE_NAME" = {
+{
   type = BehaviorTree.Random,
   nodes = {
         "NODE_NAME",
@@ -182,7 +182,7 @@ This node is similiar to `Random`, but each node has a chance parameter that det
 By default, the draw function selects numbers from 1 to 100, so your chances should accumulate to that number. However, it is possible to use your number generator and change the number range. How to do this is explained later.
 
 ```lua
-"YOUR_NODE_NAME" = {
+{
     type = BehaviorTree.RandomWithChances,
     nodes = {
         {
@@ -215,7 +215,7 @@ A decorator node can have a child node. Unlike a composite node, they can specif
 As name suggest, no matter what child returns, the result will always be the fail.
 
 ```lua
-"YOUR_NODE_NAME" = {
+{
     type = BehaviorTree.AlwaysFailDecorator,
     node = {
         "ANOTHER_NODE_NAME",
@@ -228,7 +228,7 @@ As name suggest, no matter what child returns, the result will always be the fai
 As name suggest, no matter what child returns, the result will always be the success.
 
 ```lua
-"YOUR_NODE_NAME" = {
+{
     type = BehaviorTree.AlwaysSucceedDecorator,
     node = {
         "ANOTHER_NODE_NAME",
@@ -241,7 +241,7 @@ As name suggest, no matter what child returns, the result will always be the suc
 This node is only used together with the `RandomWithChances` composite. If you want to use the names of other nodes in the list in `RandomWithChances`, this decorator will dress your node accordingly and add a chance parameter.
 
 ```lua
-"YOUR_NODE_NAME" = {
+{
     type = BehaviorTree.ChanceDecorator,
     chance = 30,
     node = {
@@ -255,7 +255,7 @@ This node is only used together with the `RandomWithChances` composite. If you w
 Revert child returned status. So if the node returns success, the decorator turns it to fail and vice versa.
 
 ```lua
-"YOUR_NODE_NAME" = {
+{
     type = BehaviorTree.InvertDecorator,
     node = {
         "NODE_NAME",
@@ -268,7 +268,7 @@ Revert child returned status. So if the node returns success, the decorator turn
 Repeat it's child until it return fail status. Good for Behavior tree root node.
 
 ```lua
-"YOUR_NODE_NAME" = {
+{
     type = BehaviorTree.RepeatUntilFailDecorator,
     node = {
         "NODE_NAME",
