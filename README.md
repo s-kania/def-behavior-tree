@@ -19,10 +19,13 @@ There is also debug window showing traversal on nodes and their status.
 
 You can use the modules from this project in your own project by adding this project as a Defold library dependency. Open your game.project file and in the dependencies field under project add:
 
-https://github.com/s-kania/def-behavior-tree/archive/master.zip
-Or point to the ZIP file of a specific release.
+`https://github.com/s-kania/def-behavior-tree/archive/master.zip`
 
-Import library snippet:
+Or point to the ZIP file of a specific release:
+
+`https://github.com/s-kania/def-behavior-tree/archive/refs/tags/1.0.0.zip`
+
+Import library:
 
 ```lua
 local BehaviourTree = require "def_behavior_tree.behavior_tree"
