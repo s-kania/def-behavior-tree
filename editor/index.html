@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Behavior Tree Editor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Behavior Tree Editor</h1>
+    <div id="editor-container">
+        <div id="toolbar">
+            <h3>Add Node</h3>
+            <button id="add-sequence">Sequence</button>
+            <button id="add-selector">Selector</button>
+            <button id="add-task">Task</button>
+        </div>
+        <div id="tree-container">
+            <h2>Tree</h2>
+            <div id="tree-visual"></div>
+        </div>
+        <div id="properties-container">
+            <h2>Properties</h2>
+            <div id="properties-panel">
+                <p>Select a node to see its properties.</p>
+            </div>
+        </div>
+    </div>
+    <div id="export-container">
+        <button id="export-lua">Export to Lua</button>
+        <h2>Exported Lua Code</h2>
+        <textarea id="lua-output" readonly rows="20" cols="100"></textarea>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+body {
+    font-family: sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    line-height: 1.6;
+}
+
+#editor-container {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #ddd;
+}
+
+#toolbar, #tree-container, #properties-container {
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin: 5px;
+    background: #f9f9f9;
+}
+
+#toolbar {
+    width: 15%;
+}
+
+#tree-container {
+    width: 50%;
+}
+
+#properties-container {
+    width: 30%;
+}
+
+#export-container {
+    margin: 20px;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #ddd;
+}
+
+button {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    background: #337ab7;
+    color: white;
+    border: none;
+    border-radius: 3px;
+}
+
+button:hover {
+    background: #286090;
+}
+
+#export-lua {
+    width: auto;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+}
+
+textarea {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.node {
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    margin: 5px 0 5px 20px;
+    background-color: #e9e9e9;
+    border-radius: 4px;
+}
+
+.node.selected {
+    border-color: #337ab7;
+    background-color: #dbe9f9;
+}
+
+.node-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.delete-btn {
+    background: #d9534f;
+    color: white;
+    border: none;
+    padding: 2px 6px;
+    cursor: pointer;
+    border-radius: 50%;
+    font-size: 12px;
+    line-height: 1;
+    width: auto;
+    margin: 0;
+}
+
+.delete-btn:hover {
+    background: #c9302c;
+}
